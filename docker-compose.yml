@@ -1,0 +1,33 @@
+version: '3.8'
+
+networks:
+  jupyterhub-network:
+    name: &networkname jupyterhub-network
+    driver: bridge
+
+services:
+  jupyterhub:
+    image: xnat/jupyterhub:latest
+    build:
+      context: ./jupyterhub
+      args:
+        JH_VERSION: "${JH_VERSION}"
+        JH_DOCKERSPAWNER_VERSION: "${JH_DOCKERSPAWNER_VERSION}"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000"
+      - "8081"
+    networks:
+      - jupyterhub-network
+    environment:
+      JH_NETWORK: *networkname
+      JH_USER_NB_IMG: "${JH_USER_NB_IMG}"
+      JH_UID: "${JH_UID}"
+      JH_GID: "${JH_GID}"
+      JH_XNAT_URL: "${JH_XNAT_URL}"
+      JH_XNAT_SERVICE_TOKEN: "${JH_XNAT_SERVICE_TOKEN}"
+      JH_XNAT_USERNAME: "${JH_XNAT_USERNAME}"
+      JH_XNAT_PASSWORD: "${JH_XNAT_PASSWORD}"
