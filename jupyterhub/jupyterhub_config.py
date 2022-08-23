@@ -90,13 +90,11 @@ c.JupyterHub.authenticator_class = XnatAuthenticator
 
 # Pre Spawn Hook for mounting users projects to the container
 def xnat_pre_spawn_hook(spawner):
-    # User options sent from XNAT
-    user_options = spawner.user_options
+    # Request user_options from XNAT
+    xnat_url = f'{os.environ["JH_XNAT_URL"]}/xapi/jupyterhub/users/{spawner.user.name}/server/user-options'
 
-    # Get configuration from XNAT
-    xnat_url = f'{os.environ["JH_XNAT_URL"]}/xapi/jupyterhub/users/{spawner.user.name}/server/config?' \
-               f'xsiType={user_options["xsiType"]}&id={user_options["id"]}'
-    logger.debug(f'Requesting server config from XNAT for user {spawner.user.name} at {xnat_url}')
+    logger.debug(f'Requesting user options from XNAT for user {spawner.user.name}')
+
     r = requests.get(xnat_url, auth=HTTPBasicAuth(os.environ['JH_XNAT_USERNAME'],
                                                   os.environ['JH_XNAT_PASSWORD']))
 
@@ -104,10 +102,12 @@ def xnat_pre_spawn_hook(spawner):
     environment_variables = {}
 
     if r.ok:
-        logger.debug(f'Server config for user {spawner.user.name} received.')
-
         json = r.json()
+
+        logger.debug(f'User options for user {spawner.user.name} server {spawner.name} received. user_options = {json}')
+
         mounts = json['mounts']
+        environment_variables = json['environment-variables']
 
         for mount in mounts:
             mount_name = mount['name']
@@ -117,12 +117,12 @@ def xnat_pre_spawn_hook(spawner):
             volumes[container_host_path] = {'bind': jupyterhub_host_path, 'mode': mode}
 
             if mount_name == "user-workspace":
-                c.DockerSpawner.notebook_dir = jupyterhub_host_path
-
-        environment_variables = json['environment-variables']
+                # c.DockerSpawner.notebook_dir = jupyterhub_host_path  # this is flaky, using env var instead
+                environment_variables['JUPYTERHUB_ROOT_DIR'] = jupyterhub_host_path
 
     else:
-        logger.error(f'Failed to get server config from XNAT for user {spawner.user.name}')
+        logger.error(f'Failed to get user options from XNAT for user {spawner.user.name}')
+        raise Exception(f'Failed to get user options from XNAT for user {spawner.user.name}')
 
     spawner.volumes.update(volumes)
     spawner.environment.update(environment_variables)
