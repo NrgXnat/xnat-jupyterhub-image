@@ -7,7 +7,7 @@ networks:
 
 services:
   jupyterhub:
-    image: xnat/jupyterhub:latest
+    image: xnat/jupyterhub:0.1.0
     build:
       context: ./jupyterhub
       args:
