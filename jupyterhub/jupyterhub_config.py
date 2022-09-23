@@ -29,6 +29,8 @@ c.Authenticator.admin_users = {'admin'}
 
 # Spawner configuration
 c.JupyterHub.spawner_class = 'dockerspawner.SwarmSpawner'
+c.Spawner.start_timeout = 180
+c.Spawner.http_timeout = 75
 c.SwarmSpawner.network_name = os.environ['JH_NETWORK']
 c.SwarmSpawner.remove = True  # Delete containers on user logout
 
