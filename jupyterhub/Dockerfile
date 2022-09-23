@@ -1,9 +1,8 @@
-ARG JH_VERSION=2.3.0
+ARG JH_VERSION=3.0.0
 FROM jupyterhub/jupyterhub:$JH_VERSION
 LABEL maintainer="andrewl@wustl.edu"
 ARG JH_DOCKERSPAWNER_VERSION=12.1.0
 ENV JH_NETWORK="jupyterhub-network"
-ENV JH_USER_NB_IMG="jupyterhub-single-user"
 ENV JH_XNAT_URL="http://host.docker.internal:80"
 ENV JH_XNAT_SERVICE_TOKEN="secret-token"
 ENV JH_XNAT_USERNAME=jupyterhub

@@ -3,11 +3,13 @@ version: '3.8'
 networks:
   jupyterhub-network:
     name: &networkname jupyterhub-network
-    driver: bridge
+    driver: overlay
+    attachable: true
 
 services:
   jupyterhub:
-    image: xnat/jupyterhub:0.1.0
+    image: xnat/jupyterhub:0.1.1-SNAPSHOT
+    hostname: jupyterhub
     build:
       context: ./jupyterhub
       args:
@@ -24,7 +26,6 @@ services:
       - jupyterhub-network
     environment:
       JH_NETWORK: *networkname
-      JH_USER_NB_IMG: "${JH_USER_NB_IMG}"
       JH_UID: "${JH_UID}"
       JH_GID: "${JH_GID}"
       JH_XNAT_URL: "${JH_XNAT_URL}"

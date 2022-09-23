@@ -1,0 +1,31 @@
+version: '3.8'
+
+networks:
+  jupyterhub-network:
+    name: &networkname jupyterhub-network
+    driver: overlay
+    attachable: true
+
+services:
+  jupyterhub:
+    image: xnat/jupyterhub:0.1.1-SNAPSHOT
+    hostname: jupyterhub
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+    ports:
+      - "80:8000"
+    networks:
+      - jupyterhub-network
+    environment:
+      JH_NETWORK: *networkname
+      JH_UID:
+      JH_GID:
+      JH_XNAT_URL:
+      JH_XNAT_SERVICE_TOKEN: secret-token
+      JH_XNAT_USERNAME: jupyterhub
+      JH_XNAT_PASSWORD: jupyterhub
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
