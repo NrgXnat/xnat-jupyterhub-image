@@ -9,6 +9,7 @@ ENV JH_XNAT_USERNAME=jupyterhub
 ENV JH_XNAT_PASSWORD=jupyterhub
 
 RUN python3 -m pip install --no-cache dockerspawner==$JH_DOCKERSPAWNER_VERSION
+RUN python3 -m pip install --no-cache oauthenticator==15.1.0
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y gosu; \

@@ -8,7 +8,7 @@ networks:
 
 services:
   jupyterhub:
-    image: xnat/jupyterhub:0.1.1-SNAPSHOT
+    image: xnat/jupyterhub:0.1.1-SNAPSHOT-GOOGLE
     hostname: jupyterhub
     build:
       context: ./jupyterhub

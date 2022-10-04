@@ -3,8 +3,8 @@ import sys
 import logging
 import requests
 
-from jupyterhub.auth import Authenticator
 from requests.auth import HTTPBasicAuth
+from oauthenticator.google import GoogleOAuthenticator
 
 c = get_config()
 
@@ -64,27 +64,9 @@ c.JupyterHub.load_roles = [
     }
 ]
 
-
-# Authenticate user with XNAT
-class XnatAuthenticator(Authenticator):
-    async def authenticate(self, handler, data):
-        xnat_url = f'{os.environ["JH_XNAT_URL"]}'
-        xnat_auth_api = f'{xnat_url}/data/services/auth'
-
-        logger.info(f'User {data["username"]} is attempting to login.')
-
-        response = requests.put(xnat_auth_api, data=f'username={data["username"]}&password={data["password"]}')
-
-        if response.status_code == 200:
-            logger.info(f'User {data["username"]} authenticated.')
-            return {'name': data['username']}
-        else:
-            logger.info(f'Failed to authenticate user {data["username"]} with XNAT.')
-            return None
-
-
-c.JupyterHub.authenticator_class = XnatAuthenticator
-
+c.JupyterHub.authenticator_class = GoogleOAuthenticator
+c.GoogleOAuthenticator.client_id = "130641928398-7fd85n2comjc1fkve73q34rrvq2uanli"
+c.GoogleOAuthenticator.client_secret = "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"
 
 # Pre Spawn Hook for mounting XNAT data to the container
 def xnat_pre_spawn_hook(spawner):
