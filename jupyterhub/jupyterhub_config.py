@@ -54,16 +54,15 @@ c.JupyterHub.services = [
 
 c.JupyterHub.load_roles = [
     {
-        "name": "admin-servers-role",
+        "name": "admin-hub-role",
         "scopes": [
-            "admin:servers", "admin:users", "read:hub"
+            "admin:servers", "admin:users", "read:hub", "tokens"
         ],
         "services": [
             "xnat"
         ],
     }
 ]
-
 
 # Authenticate user with XNAT
 class XnatAuthenticator(Authenticator):
@@ -106,9 +105,10 @@ def xnat_pre_spawn_hook(spawner):
 
         mounts = json['mounts']
         environment_variables = json['environment-variables']
-        docker_image = json['docker-image']
 
-        spawner.image = docker_image
+        container_spec = json['container-spec']
+        spawner.image = container_spec['image']
+        spawner.extra_container_spec.update(container_spec)
 
         for mount in mounts:
             mount_name = mount['name']
