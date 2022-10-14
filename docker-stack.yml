@@ -8,7 +8,7 @@ networks:
 
 services:
   jupyterhub:
-    image: xnat/jupyterhub:0.2.0.rc2
+    image: xnat/jupyterhub:0.2.1-dev0
     hostname: jupyterhub
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
