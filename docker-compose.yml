@@ -8,13 +8,14 @@ networks:
 
 services:
   jupyterhub:
-    image: xnat/jupyterhub:0.1.1-SNAPSHOT
+    image: xnat/jupyterhub:0.2.0.rc2
     hostname: jupyterhub
     build:
-      context: ./jupyterhub
+      context: dockerfiles/jupyterhub
       args:
         JH_VERSION: "${JH_VERSION}"
         JH_DOCKERSPAWNER_VERSION: "${JH_DOCKERSPAWNER_VERSION}"
+        JH_XNAT2JUPYTERHUB_VERSION: "${JH_XNAT2JUPYTERHUB_VERSION}"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
     ports:
