@@ -37,10 +37,10 @@ c.SwarmSpawner.network_name = os.environ['JH_NETWORK']  # Spawn single-user cont
 c.SwarmSpawner.pre_spawn_hook = xnat_pre_spawn_hook  # mount's xnat archive
 
 # Run jupyter notebook servers with the specified UID and GID
-if 'JH_UID' in os.environ and 'JH_GID' in os.environ:
-    if os.environ['JH_UID'] and os.environ['JH_GID']:
-        environment = {'NB_UID': os.environ['JH_UID'],
-                       'NB_GID': os.environ['JH_GID']}
+if 'NB_UID' in os.environ and 'NB_GID' in os.environ:
+    if os.environ['NB_UID'] and os.environ['NB_GID']:
+        environment = {'NB_UID': os.environ['NB_UID'],
+                       'NB_GID': os.environ['NB_GID']}
         c.SwarmSpawner.environment.update(environment)
         c.SwarmSpawner.extra_container_spec = {'user': '0'}
 
