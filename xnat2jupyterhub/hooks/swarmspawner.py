@@ -48,6 +48,9 @@ def pre_spawn_hook(spawner):
         spawner.image = container_spec['image']
         spawner.extra_container_spec.update(container_spec)
 
+        placement_spec = json['placement-spec']
+        spawner.extra_placement_spec.update(placement_spec)
+
         for mount in mounts:
             mount_name = mount['name']
             container_host_path = mount['containerHostPath']
