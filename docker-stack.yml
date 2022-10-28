@@ -22,6 +22,7 @@ services:
       JH_GID:
       NB_UID:
       NB_GID:
+      JH_START_TIMEOUT: 180
       JH_XNAT_URL:
       JH_XNAT_SERVICE_TOKEN:
       JH_XNAT_USERNAME: jupyterhub
