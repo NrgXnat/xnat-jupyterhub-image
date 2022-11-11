@@ -48,22 +48,24 @@ def pre_spawn_hook(spawner):
         spawner.image = container_spec['image']
         spawner.extra_container_spec.update(container_spec)
 
-        placement_spec = json['placement-spec']
-        spawner.extra_placement_spec.update(placement_spec)
+        if 'placement-spec' in json:
+            placement_spec = json['placement-spec']
+            spawner.extra_placement_spec.update(placement_spec)
 
-        resource_spec = json['resource-spec']
+        if 'resource-spec' in json:
+            resource_spec = json['resource-spec']
 
-        if 'cpu_limit' in resource_spec and resource_spec['cpu_limit'] > 0:
-            spawner.cpu_limit = resource_spec['cpu_limit']
+            if 'cpu_limit' in resource_spec and resource_spec['cpu_limit'] > 0:
+                spawner.cpu_limit = resource_spec['cpu_limit']
 
-        if 'cpu_reservation' in resource_spec and resource_spec['cpu_reservation'] > 0:
-            spawner.cpu_guarantee = resource_spec['cpu_reservation']
+            if 'cpu_reservation' in resource_spec and resource_spec['cpu_reservation'] > 0:
+                spawner.cpu_guarantee = resource_spec['cpu_reservation']
 
-        if 'mem_limit' in resource_spec and resource_spec['mem_limit']:
-            spawner.mem_limit = resource_spec['mem_limit']
+            if 'mem_limit' in resource_spec and resource_spec['mem_limit']:
+                spawner.mem_limit = resource_spec['mem_limit']
 
-        if 'mem_reservation' in resource_spec and resource_spec['mem_reservation']:
-            spawner.mem_guarantee = resource_spec['mem_reservation']
+            if 'mem_reservation' in resource_spec and resource_spec['mem_reservation']:
+                spawner.mem_guarantee = resource_spec['mem_reservation']
 
         for mount in mounts:
             mount_name = mount['name']
