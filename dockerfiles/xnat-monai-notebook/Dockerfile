@@ -1,5 +1,5 @@
 ARG JH_VERSION=3.0.0
-FROM jupyter/tensorflow-notebook:hub-$JH_VERSION
+FROM xnat/scipy-notebook:0.3.0
 
 COPY --chown=${NB_UID}:${NB_GID} requirements.txt /tmp/
 

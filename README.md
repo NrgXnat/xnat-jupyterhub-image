@@ -180,8 +180,10 @@ XnatAuthenticator, and the xnat_pre_spawn_hook.
 | JH_XNAT_SERVICE_TOKEN      | XNAT needs a service account within JupyterHub inorder to spawn servers. This is the token used by XNAT for the service account. Required by xnat_pre_spawn_hook. |
 | JH_XNAT_USERNAME           | JupyterHub needs an account with XNAT to retrieve the user options during the spawning process. Required by xnat_pre_spawn_hook.                                  |
 | JH_XNAT_PASSWORD           | The password for JupyterHub's account on XNAT. Required by xnat_pre_spawn_hook.                                                                                   |
-| JH_UID                     | The UID to run JupyterHub and the single-user Jupyter containers with. This should match XNAT's UID. Optional. Used in jupyterhub_config.py.                      |
-| JH_GID                     | The GID to run JupyterHub and the single-user Jupyter containers with. This should match XNAT's GID. Optional. Used in jupyterhub_config.py.                      |
+| JH_UID                     | The UID to run JupyterHub with.                                                                                                                                   |
+| JH_GID                     | The GID to run JupyterHub with. This group should have access to the Docker socket.                                                                               |
+| NB_UID                     | The UID to run the single-user Jupyter containers with. This should match the UID of the XNAT archive.                                                            |
+| NB_GID                     | The GID to run the single-user Jupyter containers with. This should match the GID of the XNAT archive.                                                            |
 
 
 ## Building and Running the xnat/jupyterhub Image

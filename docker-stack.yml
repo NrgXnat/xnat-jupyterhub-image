@@ -8,22 +8,25 @@ networks:
 
 services:
   jupyterhub:
-    image: xnat/jupyterhub:0.2.0
+    image: xnat/jupyterhub:0.3.0
     hostname: jupyterhub
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
     ports:
-      - "80:8000"
+      - "8000:8000"
     networks:
       - jupyterhub-network
     environment:
       JH_NETWORK: *networkname
       JH_UID:
       JH_GID:
+      NB_UID:
+      NB_GID:
+      JH_START_TIMEOUT: 180
       JH_XNAT_URL:
-      JH_XNAT_SERVICE_TOKEN: secret-token
+      JH_XNAT_SERVICE_TOKEN:
       JH_XNAT_USERNAME: jupyterhub
-      JH_XNAT_PASSWORD: jupyterhub
+      JH_XNAT_PASSWORD:
     deploy:
       replicas: 1
       placement:

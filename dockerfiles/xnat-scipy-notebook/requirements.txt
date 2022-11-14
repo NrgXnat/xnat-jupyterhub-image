@@ -1,4 +1,4 @@
 pyxnat>=1.4
-xnat>=0.4.2
+xnat>=0.4.3
 pydicom>=2.3.0
 papermill>=2.3.3
