@@ -1,6 +1,7 @@
-# xnat2jupyterhub 
+# xnat2jupyterhub and xnat/jupyterhub
 
-xnat2jupyterhub is a Python package for integrating XNAT with JupyterHub.
+xnat2jupyterhub is a Python package for integrating XNAT with JupyterHub. The xnat/jupyter image contains a 
+preconfigured JupyterHub for running with XNAT.
 
 To connect XNAT with JupyterHub, xnat2jupyterhub will:
 1. Authenticate a user with XNAT
@@ -172,43 +173,137 @@ XnatAuthenticator, and the xnat_pre_spawn_hook.
 
 | Variable                   | Description / Comments                                                                                                                                            |
 |:---------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| JH_VERSION                 | The JupyterHub version. Used in the Dockerfile for setting up JupyterHub.                                                                                         |
-| JH_DOCKERSPAWNER_VERSION   | The version of dockerspawner to use with JupyterHub. Used in the Dockerfile for setting up JupyterHub.                                                            |
-| JH_XNAT2JUPYTERHUB_VERSION | The version of xnat2jupyterhub. Used in the Dockerfile for setting up JupyterHub.                                                                                 |
 | JH_NETWORK                 | JupyterHub and the single-user Jupyter containers must run on the same Docker network. Used in jupyterhub_config.py.                                              |
 | JH_XNAT_URL                | The URL of the XNAT to connect to. Required by XnatAuthenticator and xnat_pre_spawn_hook.                                                                         |
 | JH_XNAT_SERVICE_TOKEN      | XNAT needs a service account within JupyterHub inorder to spawn servers. This is the token used by XNAT for the service account. Required by xnat_pre_spawn_hook. |
 | JH_XNAT_USERNAME           | JupyterHub needs an account with XNAT to retrieve the user options during the spawning process. Required by xnat_pre_spawn_hook.                                  |
 | JH_XNAT_PASSWORD           | The password for JupyterHub's account on XNAT. Required by xnat_pre_spawn_hook.                                                                                   |
+| JH_START_TIMEOUT           | The amount of time JupyterHub should wait (in seconds) before deciding the single user container failed to start                                                  |
 | JH_UID                     | The UID to run JupyterHub with.                                                                                                                                   |
 | JH_GID                     | The GID to run JupyterHub with. This group should have access to the Docker socket.                                                                               |
 | NB_UID                     | The UID to run the single-user Jupyter containers with. This should match the UID of the XNAT archive.                                                            |
 | NB_GID                     | The GID to run the single-user Jupyter containers with. This should match the GID of the XNAT archive.                                                            |
 
 
-## Building and Running the xnat/jupyterhub Image
-1. Initiate a Docker swarm if you are not already on one. Otherwise, make sure you are on a master node.
+## Running the xnat/jupyterhub Image
+These are the steps for deploying JupyterHub alongside an existing XNAT. For convenience, the 
+[xnat-docker-compose repository](https://github.com/NrgXnat/xnat-docker-compose/tree/features/jupyterhub) has a branch 
+with JupyterHub added as a service alongside XNAT.
+
+1. Clone repo into a directory.
+   ```shell
+   cd /opt
+   git clone https://bitbucket.org/xnat-containers/xnat-jupyterhub.git jupyterhub
+   ```
+2. Configure the docker-stack.yml environmental variables.
+   
+   It is critical to correctly configure the UID and GID of JupyterHub (JH) and the single-user Jupyter notebook (NB) 
+   containers. In general, the Tomcat/XNAT UID is used as the UID for JH and the NB containers. The Tomcat/XNAT GID is 
+   used as the GID for the NB containers only. The GID for JH is the group id of the docker group.
+   
+   Get the id of the tomcat/xnat user 
+   ```shell
+   $ id tomcat
+    uid=54(tomcat) gid=54(tomcat) groups=54(tomcat),992(docker)
+    ```
+   
+   You can also find the gid of the docker socket with
+   ```shell
+   $ cat /etc/group | grep docker
+   docker:x:992:tomcat
+   ```
+   Tomcat, JH and the NB containers will share this UID (54). Tomcat and the NB containers will share the same GID (54) 
+   while JH will be a member of the docker group (992).
+
+   If you have a domain name for this server we will also set the `JH_XNAT_URL` environmental variable. This 
+   environmental variable is used by JupyterHub to communicate with your XNAT.
+   ```shell
+   # docker-stack.yml
+   
+   # ...
+   
+   environment:
+     JH_NETWORK: *networkname
+     JH_UID: 54
+     JH_GID: 992
+     NB_UID: 54
+     NB_GID: 54
+     JH_START_TIMEOUT: 180
+     JH_XNAT_URL: http://172.17.0.1 OR https://your.xnat.org
+     JH_XNAT_SERVICE_TOKEN: 
+     JH_XNAT_USERNAME: jupyterhub
+     JH_XNAT_PASSWORD: 
+   ```
+   
+   You will also need to supply a service token for XNAT to use with JupyterHub and a password for JupyterHub to use
+   with XNAT. 
+
+3. Initiate a Docker swarm if you are not already on one. Otherwise, make sure you are on a master node.
     ```shell
     docker swarm init
     ```
 
-2. Optional: Build the JupyterHub single user images
-    ```shell
-    cd dockerfiles/xnat-scipy-notebook
-    ./build.sh
-    ```
-
-3. Build JupyterHub:
-    ```shell
-    docker compose build 
-    ```
-
 4. Start JupyterHub:
     ```shell
-    docker compose up -d
+    docker stack deploy -c docker-stack.yml jupyterhub
     ```
-
-5. Stop JupyterHub
+   
+   JupyterHub should be available at http://localhost:8000/jupyterhub.
+   
+5. Pull single-user container images:
+   ```shell
+   docker image pull jupyter/scipy-notebook:hub-3.0.0
+   docker image pull xnat/scipy-notebook:0.3.0
+   docker image pull xnat/monai-notebook:0.3.0
+   ```
+   
+6. View and inspect JupyterHub and the single-user NB containers:
+   ```shell
+   docker service ls
+   docker service logs 9hzw7gu0mo79
+   docker service inspect 9hzw7gu0mo79     
+   ```
+   
+7. Stop JupyterHub 
     ```shell
-    docker compose down
+    docker stack rm jupyterhub
     ```
+   
+### Using a reverse proxy 
+JupyterHub and XNAT should live behind the same reverse proxy with XNAT at / and JupyterHub at /jupyterhub. The 
+[xnat-docker-compose repo](https://github.com/NrgXnat/xnat-docker-compose/blob/features/jupyterhub/nginx/nginx.conf) has
+an example of having XNAT and JupyterHub behind the same reverse proxy. This is based on the JupyterHub 
+[documentation](https://jupyterhub.readthedocs.io/en/stable/reference/config-proxy.html). 
+
+Below is an example of configuring haproxy:
+```shell
+# haproxy.cfg example
+
+# ...
+# ...
+# ...
+
+frontend appserver
+        bind 0.0.0.0:80
+        bind 0.0.0.0:443 ssl crt /etc/ssl/certs/devcert.pem
+        http-response replace-value Location ^http://(.*)$ https://\1
+        use_backend jupyterhub if { path_beg /jupyterhub } || { path_beg /jupyterhub/ }
+        use_backend web_servers if { path_beg / }
+        default_backend web_servers
+
+backend web_servers
+        mode http
+        balance roundrobin
+        option forwardfor
+        http-request set-header X-Forwarded-Port %[dst_port]
+        http-response set-header location %[res.hdr(location),regsub(http://,https://)] if { status 301 302 }
+        server web01 127.0.0.1:8080
+
+backend jupyterhub
+        mode http
+        balance roundrobin
+        option forwardfor
+        http-request set-header X-Forwarded-Port %[dst_port]
+        http-response set-header location %[res.hdr(location),regsub(http://,https://)] if { status 301 302 }
+        server jhub01 127.0.0.1:8000
+```
