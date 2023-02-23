@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='xnat2jupyterhub',
-    version='0.3.0',
+    version='1.0.0-beta1',
     url='https://bitbucket.org/xnat-containers/xnat-jupyterhub',
     author='Andrew Lassiter',
     author_email='andrewl@wustl.edu',

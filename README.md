@@ -248,7 +248,8 @@ with JupyterHub added as a service alongside XNAT.
     docker stack deploy -c docker-stack.yml jupyterhub
     ```
    
-   JupyterHub should be available at http://localhost:8000/jupyterhub.
+   JupyterHub should be available at http://localhost:8000/jupyterhub (or your domain name). See notes below for 
+   configuring your reverse proxy if you can't find JupyterHub.
    
 5. Pull single-user container images:
    ```shell

@@ -34,55 +34,68 @@ def pre_spawn_hook(spawner):
                                                   os.environ['JH_XNAT_PASSWORD']))
 
     volumes = {}
-    environment_variables = {}
 
     if r.ok:
         json = r.json()
 
         logger.info(f'User options for user {spawner.user.name} server {spawner.name} retrieved from XNAT.')
 
-        mounts = json['mounts']
-        environment_variables = json['environment-variables']
+        task_template = json['task_template']
 
-        container_spec = json['container-spec']
-        spawner.image = container_spec['image']
-        spawner.extra_container_spec.update(container_spec)
+        if 'placement' in task_template:
+            placement = task_template['placement']
+            spawner.extra_placement_spec.update(placement)
 
-        if 'placement-spec' in json:
-            placement_spec = json['placement-spec']
-            spawner.extra_placement_spec.update(placement_spec)
+        if 'resources' in task_template:
+            resources = task_template['resources']
 
-        if 'resource-spec' in json:
-            resource_spec = json['resource-spec']
+            if 'cpu_limit' in resources:
+                if resources['cpu_limit'] and resources['cpu_limit'] > 0:
+                    spawner.cpu_limit = resources['cpu_limit']
 
-            if 'cpu_limit' in resource_spec and resource_spec['cpu_limit'] > 0:
-                spawner.cpu_limit = resource_spec['cpu_limit']
+                resources.pop('cpu_limit')
 
-            if 'cpu_reservation' in resource_spec and resource_spec['cpu_reservation'] > 0:
-                spawner.cpu_guarantee = resource_spec['cpu_reservation']
+            if 'cpu_reservation' in resources:
+                if resources['cpu_reservation'] and resources['cpu_reservation'] > 0:
+                    spawner.cpu_guarantee = resources['cpu_reservation']
 
-            if 'mem_limit' in resource_spec and resource_spec['mem_limit']:
-                spawner.mem_limit = resource_spec['mem_limit']
+                resources.pop('cpu_reservation')
 
-            if 'mem_reservation' in resource_spec and resource_spec['mem_reservation']:
-                spawner.mem_guarantee = resource_spec['mem_reservation']
+            if 'mem_limit' in resources:
+                if resources['mem_limit']:
+                    spawner.mem_limit = resources['mem_limit']
 
-        for mount in mounts:
-            mount_name = mount['name']
-            container_host_path = mount['containerHostPath']
-            jupyterhub_host_path = mount['jupyterHostPath']
-            mode = 'rw' if mount['writable'] else 'ro'
-            volumes[container_host_path] = {'bind': jupyterhub_host_path, 'mode': mode}
+                resources.pop('mem_limit')
 
-            if mount_name == "user-workspace":
-                environment_variables['JUPYTERHUB_ROOT_DIR'] = jupyterhub_host_path
+            if 'mem_reservation' in resources:
+                if resources['mem_reservation']:
+                    spawner.mem_guarantee = resources['mem_reservation']
+
+                resources.pop('mem_reservation')
+
+            spawner.extra_resources_spec.update(resources)
+
+        if 'container_spec' in task_template:
+            container_spec = task_template['container_spec']
+
+            if 'image' in container_spec:
+                spawner.image = container_spec['image']
+
+            if 'env' in container_spec:
+                env = container_spec['env']
+                spawner.environment.update(env)
+
+            if 'mounts' in container_spec:
+                mounts = container_spec['mounts']
+                for mount in mounts:
+                    mode = 'ro' if mount['read_only'] else 'rw'
+                    volumes[mount['source']] = {'bind': mount['target'], 'mode': mode}
 
     else:
         logger.error(f'Failed to get user options from XNAT for user {spawner.user.name}')
         raise Exception(f'Failed to get user options from XNAT for user {spawner.user.name}')
 
     spawner.volumes.update(volumes)
-    spawner.environment.update(environment_variables)
 
     # Install user requirements.txt after the single user server has started
     # spawner.post_start_cmd = f"sh -c '[ -f /workspace/{spawner.user.name}/requirements.txt ] && pip install " \
