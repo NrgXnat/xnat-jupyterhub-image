@@ -1,60 +1,20 @@
-# xnat2jupyterhub and xnat/jupyterhub
+# xnat/jupyterhub
 
-xnat2jupyterhub is a Python package for integrating XNAT with JupyterHub. The xnat/jupyter image contains a 
-preconfigured JupyterHub for running with XNAT.
+The xnat/jupyter image contains a preconfigured JupyterHub for running with XNAT.
 
-To connect XNAT with JupyterHub, xnat2jupyterhub will:
+To connect XNAT with JupyterHub, a `jupyterhub_config.py` file has been created that 
 1. Authenticate a user with XNAT
 2. Configure the JupyterHub SwarmSpawner to mount XNAT data
 
-This repo contains xnat2jupyterhub, a `Dockerfile` and `docker-compose.yml` file for the `xnat/jupyterhub` image. The 
-xnat-jupyter-plugin must be installed in your XNAT for this to work. JupyterHub must also be running on a master node 
-within a Docker swarm.
+This repo contains a `Dockerfile` and `docker-compose.yml` file for the `xnat/jupyterhub` image. The xnat-jupyter-plugin
+must also be installed in your XNAT for this to work. JupyterHub must also be running on a master node within a Docker 
+swarm.
 
 ## Setting up JupyterHub
 JupyterHub is configured with a Python script `jupyterhub_config.py` (see 
 [JupyterHub Configuration Basics](https://jupyterhub.readthedocs.io/en/stable/getting-started/config-basics.html) for 
-more details). A full `jupyterhub_config.py` example which uses xnat2jupyterhub can be found in 
-`dockerfiles/jupyterhub`. 
-
-### Install xnat2jupyterhub
-
-```sh
-python3 -m pip install --no-cache -i https://test.pypi.org/simple/ xnat2jupyterhub=={VERSION}
-```
-
-### Import xnat2jupyterhub
-Import the XnatAuthenticator and the xnat_pre_spawn_hook from xnat2jupyterhub. 
-
-```python
-# jupyterhub_config.py
-import os
-import sys
-import logging
-
-from xnat2jupyterhub.auth import XnatAuthenticator
-from xnat2jupyterhub.hooks.swarmspawner import pre_spawn_hook as xnat_pre_spawn_hook
-...
-```
-
-### Logging Configuration
-JupyterHub already logs to stdout which can be redirected to a file at startup. This will direct xnat2jupyter logging to
-stdout.
-
-```python
-# jupyterhub_config.py
-...
-logger = logging.getLogger("xnat2jupyterhub")
-logger.propagate = False
-logger.setLevel(logging.INFO)
-
-sh = logging.StreamHandler(sys.stdout)
-sh.setLevel(logging.INFO)
-formatter = logging.Formatter("[%(levelname)s %(asctime)s %(name)s %(module)s:%(lineno)d] %(message)s")
-sh.setFormatter(formatter)
-logger.addHandler(sh)
-...
-```
+more details). A full `jupyterhub_config.py` example can be found in `dockerfiles/jupyterhub`. The following sections
+will go over important parts of the configuration.
 
 ### JupyterHub Configuration:
 For using a reverse proxy see the 
@@ -77,8 +37,8 @@ c.JupyterHub.shutdown_on_logout = True
 ```
 
 ### Authentication Configuration
-Enable any admin users on JupyterHub and set the authentication class to XnatAuthenticator from the xnat2jupyterhub 
-package. The XnatAuthenticator uses basic password authentication. The 
+Enable any admin users on JupyterHub and set the authentication class to XnatAuthenticator. The XnatAuthenticator class,
+, found in `jupyterhub_config.py`, is a custom authenticator that uses the XNAT REST API to authenticate users. The 
 [XNAT OpenID Plugin](https://bitbucket.org/xnatx/openid-auth-plugin) configured with Google OAuth was tested with the 
 [GoogleOAuthenticator](https://jupyterhub.readthedocs.io/en/stable/reference/authenticators.html#the-oauthenticator). 
 But there is a known [issue](https://issues.xnat.org/browse/JHP-24) getting these to work together.
@@ -92,12 +52,11 @@ c.JupyterHub.authenticator_class = XnatAuthenticator
 ...
 ```
 
-
 ### Spawner configuration
 The XNAT pre_spawn_hook has only been tested on Docker Swarm. We'd like to one day support Kubernetes. The start_timeout
 will set a maximum time that JupyterHub will wait before decided that a server failed to spawn. All single-user 
-containers must also run on the same Docker network. The xnat_pre_spawn_hook will call the XNAT REST API to get configuration meta-data for the container (such as mounts 
-and env variables).
+containers must also run on the same Docker network. The xnat_pre_spawn_hook will call the XNAT REST API to get 
+configuration meta-data for the container (such as mounts and env variables).
 
 ```python
 # jupyterhub_config.py
@@ -109,8 +68,6 @@ c.SwarmSpawner.network_name = os.environ['JH_NETWORK']
 c.SwarmSpawner.pre_spawn_hook = xnat_pre_spawn_hook 
 ...
 ```
-
-
 
 ### UID / GID
 If the UID and GID of the single-user Jupyter container is not set in the single-user image it can be set in 

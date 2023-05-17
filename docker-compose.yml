@@ -15,7 +15,6 @@ services:
       args:
         JH_VERSION: "${JH_VERSION}"
         JH_DOCKERSPAWNER_VERSION: "${JH_DOCKERSPAWNER_VERSION}"
-        JH_XNAT2JUPYTERHUB_VERSION: "${JH_XNAT2JUPYTERHUB_VERSION}"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
     ports:

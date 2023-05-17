@@ -1,5 +1,5 @@
 ARG JH_VERSION=3.0.0
-FROM jupyter/scipy-notebook:hub-$JH_VERSION
+FROM jupyter/datascience-notebook:hub-$JH_VERSION
 
 COPY --chown=${NB_UID}:${NB_GID} requirements.txt /tmp/
 
