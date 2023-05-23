@@ -8,7 +8,7 @@ To connect XNAT with JupyterHub, a `jupyterhub_config.py` file has been created 
 
 This repo contains a `Dockerfile` and `docker-compose.yml` file for the `xnat/jupyterhub` image. The xnat-jupyter-plugin
 must also be installed in your XNAT for this to work. JupyterHub must also be running on a master node within a Docker 
-swarm.
+Swarm in order to spawn Jupyter servers as Docker containers.
 
 ## Setting up JupyterHub
 JupyterHub is configured with a Python script `jupyterhub_config.py` (see 
@@ -53,17 +53,14 @@ c.JupyterHub.authenticator_class = XnatAuthenticator
 ```
 
 ### Spawner configuration
-The XNAT pre_spawn_hook has only been tested on Docker Swarm. We'd like to one day support Kubernetes. The start_timeout
-will set a maximum time that JupyterHub will wait before decided that a server failed to spawn. All single-user 
-containers must also run on the same Docker network. The xnat_pre_spawn_hook will call the XNAT REST API to get 
-configuration meta-data for the container (such as mounts and env variables).
+The XNAT pre_spawn_hook is responsible for configuring the single-user Jupyter container. The function will call the 
+XNAT REST API to get configuration meta-data for the container (such as mounts and env variables). See 
+`dockerfiles/jupyterhub/jupyterhub_config.py` for the full function.
 
 ```python
 # jupyterhub_config.py
 ...
 c.JupyterHub.spawner_class = 'dockerspawner.SwarmSpawner'
-c.Spawner.start_timeout = 180
-c.Spawner.http_timeout = 75
 c.SwarmSpawner.network_name = os.environ['JH_NETWORK']
 c.SwarmSpawner.pre_spawn_hook = xnat_pre_spawn_hook 
 ...
@@ -210,9 +207,8 @@ with JupyterHub added as a service alongside XNAT.
    
 5. Pull single-user container images:
    ```shell
-   docker image pull jupyter/scipy-notebook:hub-3.0.0
-   docker image pull xnat/scipy-notebook:0.3.0
-   docker image pull xnat/monai-notebook:0.3.0
+   docker image pull jupyter/datascience-notebook:hub-3.0.0
+   docker image pull xnat/datascience-notebook:latest
    ```
    
 6. View and inspect JupyterHub and the single-user NB containers:
