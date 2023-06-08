@@ -153,6 +153,14 @@ def pre_spawn_hook(spawner):
 
                 resources.pop('mem_reservation')
 
+            # Convert generic_resources values to ints if they can be
+            if 'generic_resources' in resources:
+                for key, value in resources['generic_resources'].items():
+                    try:
+                        resources['generic_resources'][key] = int(value)
+                    except ValueError:
+                        pass
+
             spawner.extra_resources_spec.update(resources)
 
         if 'container_spec' in task_template:
