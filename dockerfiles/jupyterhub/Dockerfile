@@ -18,6 +18,7 @@ RUN set -eux; \
 	gosu nobody true
 
 COPY entrypoint.sh /srv/jupyterhub
+COPY templates /srv/jupyterhub/templates
 RUN chmod +x /srv/jupyterhub/entrypoint.sh
 
 COPY jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py

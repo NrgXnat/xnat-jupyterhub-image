@@ -25,6 +25,7 @@ c.JupyterHub.hub_bind_url = 'http://:8081/jupyterhub'
 c.JupyterHub.hub_connect_url = 'http://jupyterhub:8081/jupyterhub'
 c.JupyterHub.allow_named_servers = False
 c.JupyterHub.shutdown_on_logout = True
+c.JupyterHub.template_paths = ['/srv/jupyterhub/templates']
 
 # Create service account for XNAT
 c.JupyterHub.services = [
