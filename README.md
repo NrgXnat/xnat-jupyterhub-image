@@ -3,144 +3,18 @@
 The xnat/jupyter image contains a preconfigured JupyterHub for running with XNAT.
 
 To connect XNAT with JupyterHub, a `jupyterhub_config.py` file has been created that 
-1. Authenticate a user with XNAT
-2. Configure the JupyterHub SwarmSpawner to mount XNAT data
+1. Authenticates a user with XNAT
+2. Configured the JupyterHub SwarmSpawner to mount XNAT data
 
-This repo contains a `Dockerfile` and `docker-compose.yml` file for the `xnat/jupyterhub` image. The xnat-jupyter-plugin
-must also be installed in your XNAT for this to work. JupyterHub must also be running on a master node within a Docker 
-Swarm in order to spawn Jupyter servers as Docker containers.
+This repo contains a `Dockerfile`, `docker-compose.yml`, and `docker-stack.yml` file for the `xnat/jupyterhub` image. 
+The xnat-jupyter-plugin must also be installed in your XNAT for this to work. JupyterHub must also be running on a 
+master node within a Docker Swarm in order to spawn Jupyter servers as Docker containers.
 
-## Setting up JupyterHub
-JupyterHub is configured with a Python script `jupyterhub_config.py` (see 
-[JupyterHub Configuration Basics](https://jupyterhub.readthedocs.io/en/stable/getting-started/config-basics.html) for 
-more details). A full `jupyterhub_config.py` example can be found in `dockerfiles/jupyterhub`. The following sections
-will go over important parts of the configuration.
-
-### JupyterHub Configuration:
-For using a reverse proxy see the 
-[JupyterHub docs](https://jupyterhub.readthedocs.io/en/stable/reference/config-proxy.html). For SSL see 
-[JupyterHub security settings](https://jupyterhub.readthedocs.io/en/stable/getting-started/security-basics.html).
-
-In this example XNAT will be reachable at http://xnat-url and Jupyterhub at http://xnat-url/jupyterhub. 
-XNAT does not currently use the named servers feature. We will also shut down the single-user containers when the user 
-logs out of JupyterHub.
-
-```python
-# jupyterhub_config.py
-...
-c.JupyterHub.bind_url = 'http://:8000/jupyterhub'
-c.JupyterHub.hub_bind_url = 'http://:8081/jupyterhub'
-c.JupyterHub.hub_connect_url = 'http://jupyterhub:8081/jupyterhub'
-c.JupyterHub.allow_named_servers = False
-c.JupyterHub.shutdown_on_logout = True
-...
-```
-
-### Authentication Configuration
-Enable any admin users on JupyterHub and set the authentication class to XnatAuthenticator. The XnatAuthenticator class,
-, found in `jupyterhub_config.py`, is a custom authenticator that uses the XNAT REST API to authenticate users. The 
-[XNAT OpenID Plugin](https://bitbucket.org/xnatx/openid-auth-plugin) configured with Google OAuth was tested with the 
-[GoogleOAuthenticator](https://jupyterhub.readthedocs.io/en/stable/reference/authenticators.html#the-oauthenticator). 
-But there is a known [issue](https://issues.xnat.org/browse/JHP-24) getting these to work together.
-
-```python
-...
-# jupyterhub_config.py
-...
-c.Authenticator.admin_users = {'admin'}
-c.JupyterHub.authenticator_class = XnatAuthenticator
-...
-```
-
-### Spawner configuration
-The XNAT pre_spawn_hook is responsible for configuring the single-user Jupyter container. The function will call the 
-XNAT REST API to get configuration meta-data for the container (such as mounts and env variables). See 
-`dockerfiles/jupyterhub/jupyterhub_config.py` for the full function.
-
-```python
-# jupyterhub_config.py
-...
-c.JupyterHub.spawner_class = 'dockerspawner.SwarmSpawner'
-c.SwarmSpawner.network_name = os.environ['JH_NETWORK']
-c.SwarmSpawner.pre_spawn_hook = xnat_pre_spawn_hook 
-...
-```
-
-### UID / GID
-If the UID and GID of the single-user Jupyter container is not set in the single-user image it can be set in 
-the JupyterHub configuration if your single-user Jupyter image is based on the 
-[Jupyter Docker Stacks](https://jupyter-docker-stacks.readthedocs.io/en/latest/). The UID and GID needs to match that of
-XNAT. Differences could cause problems with users reading XNAT data and writing notebooks.
-
-```python
-# jupyterhub_config.py
-...
-if 'JH_UID' in os.environ and 'JH_GID' in os.environ:
-    if os.environ['JH_UID'] and os.environ['JH_GID']:
-        environment = {'NB_UID': os.environ['JH_UID'],
-                       'NB_GID': os.environ['JH_GID']}
-        c.SwarmSpawner.environment.update(environment)
-        c.SwarmSpawner.extra_container_spec = {'user': '0'}
-...
-```
-
-### XNAT Service Account
-XNAT needs to have a service account with JupyterHub in order for it to spawn XNAT enabled Jupyter containers. The admin
-privileges granted to XNAT are only available to admin users on XNAT
-```python
-# jupyterhub_config.py
-...
-c.JupyterHub.services = [
-    {
-        "name": "xnat",
-        "api_token": os.environ['JH_XNAT_SERVICE_TOKEN']
-    },
-]
-
-c.JupyterHub.load_roles = [
-    {
-        "name": "admin-hub-role",
-        "scopes": [
-            "admin:servers", "admin:users", "read:hub", "tokens"
-        ],
-        "services": [
-            "xnat"
-        ],
-    }
-]
-```
-
-## Single-User Jupyter Images
-JupyterHub needs an image to use for the single-user Jupyter containers. `dockerfiles/` contains example Dockerfiles 
-for creating single-user Jupyter images which are based on the 
-[Jupyter Docker Stacks](https://jupyter-docker-stacks.readthedocs.io/en/latest/). More info on
-[building your own Docker image](https://jupyterhub-dockerspawner.readthedocs.io/en/latest/docker-image.html) can be 
-found in the JupyterHub documentation. Any of the existing Jupyter Docker images can be used with JupyterHub 
-provided that the version of JupyterHub in the image matches. Any Python packages which are widely used by your users 
-should be added to the image otherwise users will need to install packages manually. The JupyterHub plugin for XNAT 
-allows users to select an image they'd like to launch with. See the plugin settings to configure the allowed images.
-
-## Arguments and Environmental Variables
-
-These are the arguments and environmental variables used in the JupyterHub dockerfile, jupyterhub_config.py, the
-XnatAuthenticator, and the xnat_pre_spawn_hook.
-
-| Variable                   | Description / Comments                                                                                                                                            |
-|:---------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| JH_NETWORK                 | JupyterHub and the single-user Jupyter containers must run on the same Docker network. Used in jupyterhub_config.py.                                              |
-| JH_XNAT_URL                | The URL of the XNAT to connect to. Required by XnatAuthenticator and xnat_pre_spawn_hook.                                                                         |
-| JH_XNAT_SERVICE_TOKEN      | XNAT needs a service account within JupyterHub inorder to spawn servers. This is the token used by XNAT for the service account. Required by xnat_pre_spawn_hook. |
-| JH_XNAT_USERNAME           | JupyterHub needs an account with XNAT to retrieve the user options during the spawning process. Required by xnat_pre_spawn_hook.                                  |
-| JH_XNAT_PASSWORD           | The password for JupyterHub's account on XNAT. Required by xnat_pre_spawn_hook.                                                                                   |
-| JH_START_TIMEOUT           | The amount of time JupyterHub should wait (in seconds) before deciding the single user container failed to start                                                  |
-| JH_UID                     | The UID to run JupyterHub with.                                                                                                                                   |
-| JH_GID                     | The GID to run JupyterHub with. This group should have access to the Docker socket.                                                                               |
-| NB_UID                     | The UID to run the single-user Jupyter containers with. This should match the UID of the XNAT archive.                                                            |
-| NB_GID                     | The GID to run the single-user Jupyter containers with. This should match the GID of the XNAT archive.                                                            |
-
+See the [XNAT JupyterHub Plugin Wiki](https://wiki.xnat.org/jupyter-integration) for the latest documentation on this 
+plugin.
 
 ## Running the xnat/jupyterhub Image
-These are the steps for deploying JupyterHub alongside an existing XNAT. For convenience, the 
+These are the steps for deploying the xnat/jupyterhub image alongside an existing XNAT. For convenience, the 
 [xnat-docker-compose repository](https://github.com/NrgXnat/xnat-docker-compose/tree/features/jupyterhub) has a branch 
 with JupyterHub added as a service alongside XNAT.
 
@@ -189,15 +63,16 @@ with JupyterHub added as a service alongside XNAT.
      JH_XNAT_PASSWORD: 
    ```
    
-   You will also need to supply a service token for XNAT to use with JupyterHub and a password for JupyterHub to use
-   with XNAT. 
+   You will also need to create a service token for XNAT to use with JupyterHub and create a password for JupyterHub to 
+   use with XNAT. Supplies these to JupyterHub here. Save these for later, you will need them to configure the JupyterHub
+   plugin in the XNAT UI.
 
 3. Initiate a Docker swarm if you are not already on one. Otherwise, make sure you are on a master node.
     ```shell
     docker swarm init
     ```
 
-4. Start JupyterHub:
+4. Start JupyterHub on a master node:
     ```shell
     docker stack deploy -c docker-stack.yml jupyterhub
     ```
@@ -207,24 +82,27 @@ with JupyterHub added as a service alongside XNAT.
    
 5. Pull single-user container images:
    ```shell
-   docker image pull jupyter/datascience-notebook:hub-3.0.0
    docker image pull xnat/datascience-notebook:latest
    ```
    
-6. View and inspect JupyterHub and the single-user NB containers:
+6. Login to XNAT and configure the JupyterHub plugin. See the documentation for all the details on how to configure the 
+   plugin. You will need the service token and password you created in step 2. In XNAT the JupyterHub service account 
+   needs to be enabled and the password set, and the JupyterHub URL, service token, and path translated need to be set.
+
+7. To view and inspect JupyterHub and a running single-user notebook container:
    ```shell
    docker service ls
    docker service logs 9hzw7gu0mo79
    docker service inspect 9hzw7gu0mo79     
    ```
    
-7. Stop JupyterHub 
+8. Stop JupyterHub 
     ```shell
     docker stack rm jupyterhub
     ```
    
 ### Using a reverse proxy 
-JupyterHub and XNAT should live behind the same reverse proxy with XNAT at / and JupyterHub at /jupyterhub. The 
+JupyterHub and XNAT should live behind the same reverse proxy with XNAT at `/` and JupyterHub at `/jupyterhub`. The 
 [xnat-docker-compose repo](https://github.com/NrgXnat/xnat-docker-compose/blob/features/jupyterhub/nginx/nginx.conf) has
 an example of having XNAT and JupyterHub behind the same reverse proxy. This is based on the JupyterHub 
 [documentation](https://jupyterhub.readthedocs.io/en/stable/reference/config-proxy.html). 
@@ -261,3 +139,20 @@ backend jupyterhub
         http-response set-header location %[res.hdr(location),regsub(http://,https://)] if { status 301 302 }
         server jhub01 127.0.0.1:8000
 ```
+
+## Arguments and Environmental Variables
+
+Here's a summary of the arguments and environmental variables used in the JupyterHub dockerfile.
+
+| Variable                   | Description / Comments                                                                                                                                            |
+|:---------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| JH_NETWORK                 | JupyterHub and the single-user Jupyter containers must run on the same Docker network. Used in jupyterhub_config.py.                                              |
+| JH_XNAT_URL                | The URL of the XNAT to connect to. Required by XnatAuthenticator and xnat_pre_spawn_hook.                                                                         |
+| JH_XNAT_SERVICE_TOKEN      | XNAT needs a service account within JupyterHub inorder to spawn servers. This is the token used by XNAT for the service account. Required by xnat_pre_spawn_hook. |
+| JH_XNAT_USERNAME           | JupyterHub needs an account with XNAT to retrieve the user options during the spawning process. Required by xnat_pre_spawn_hook.                                  |
+| JH_XNAT_PASSWORD           | The password for JupyterHub's account on XNAT. Required by xnat_pre_spawn_hook.                                                                                   |
+| JH_START_TIMEOUT           | The amount of time JupyterHub should wait (in seconds) before deciding the single user container failed to start                                                  |
+| JH_UID                     | The UID to run JupyterHub with.                                                                                                                                   |
+| JH_GID                     | The GID to run JupyterHub with. This group should have access to the Docker socket.                                                                               |
+| NB_UID                     | The UID to run the single-user Jupyter containers with. This should match the UID of the XNAT archive.                                                            |
+| NB_GID                     | The GID to run the single-user Jupyter containers with. This should match the GID of the XNAT archive.                                                            |
