@@ -4,11 +4,12 @@ The xnat/jupyter image contains a preconfigured JupyterHub for running with XNAT
 
 To connect XNAT with JupyterHub, a `jupyterhub_config.py` file has been created that 
 1. Authenticates a user with XNAT
-2. Configured the JupyterHub SwarmSpawner to mount XNAT data
+2. Configures the JupyterHub Docker SwarmSpawner to mount XNAT data
 
 This repo contains a `Dockerfile`, `docker-compose.yml`, and `docker-stack.yml` file for the `xnat/jupyterhub` image. 
-The xnat-jupyter-plugin must also be installed in your XNAT for this to work. JupyterHub must also be running on a 
-master node within a Docker Swarm in order to spawn Jupyter servers as Docker containers.
+The [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyterhub-plugin) must be installed in your XNAT. 
+The `xnat/jupyterhub` image must also be running on a manager node within a Docker Swarm in order to spawn Jupyter 
+servers as Docker containers. Note that there is one `xnat/jupyterhub` instance per XNAT.
 
 See the [XNAT JupyterHub Plugin Wiki](https://wiki.xnat.org/jupyter-integration) for the latest documentation on this 
 plugin.
@@ -58,9 +59,9 @@ with JupyterHub added as a service alongside XNAT.
      NB_GID: 54
      JH_START_TIMEOUT: 180
      JH_XNAT_URL: http://172.17.0.1 OR https://your.xnat.org
-     JH_XNAT_SERVICE_TOKEN: 
+     JH_XNAT_SERVICE_TOKEN: # create a service token for XNAT to talk to JH
      JH_XNAT_USERNAME: jupyterhub
-     JH_XNAT_PASSWORD: 
+     JH_XNAT_PASSWORD: # create a password for JH to talk to XNAT
    ```
    
    You will also need to create a service token for XNAT to use with JupyterHub and create a password for JupyterHub to 
