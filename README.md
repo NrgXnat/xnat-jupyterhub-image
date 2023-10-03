@@ -157,3 +157,25 @@ Here's a summary of the arguments and environmental variables used in the Jupyte
 | JH_GID                     | The GID to run JupyterHub with. This group should have access to the Docker socket.                                                                               |
 | NB_UID                     | The UID to run the single-user Jupyter containers with. This should match the UID of the XNAT archive.                                                            |
 | NB_GID                     | The GID to run the single-user Jupyter containers with. This should match the GID of the XNAT archive.                                                            |
+
+## Running on Kubernetes
+
+The 'xnat-jupyterhub-chart' directory contains a Helm chart which deploys JupyterHub for an XNAT instance on Kubernetes.
+The chart is based on the [Zero to JupyterHub](https://zero-to-jupyterhub.readthedocs.io/en/latest/) chart. 
+The chart contains a `values.yaml` file which contains the default values needed to deploy JupyterHub for an XNAT. A 
+postgres database is also deployed for JupyterHub. This chart presumes that the XNAT instance is deployed in the same
+Kubernetes namespace as JupyterHub. This chart, [johnflavin/xnat-skaffold](https://gitlab.com/johnflavin/xnat-skaffold),
+was used to deploy XNAT when developing this chart. The PV and PVC for the user workspaces are created by the XNAT
+deployment. Be sure the JupyterHub plugin is installed in the XNAT instance.
+
+The chart can be deployed with the following command:
+
+```shell
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add jupyterhub https://jupyterhub.github.io/helm-chart
+helm repo update
+helm upgrade --install jupyterhub xnat-jupyterhub-chart/ -n xnat --create-namespace --values xnat-jupyterhub-chart/values.yaml
+helm uninstall xnat-jupyterhub -n xnat
+```
+
+You may need to update the `values.yaml` file to align with your deployment and XNAT instance.
