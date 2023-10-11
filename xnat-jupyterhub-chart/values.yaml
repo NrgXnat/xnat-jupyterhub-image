@@ -66,73 +66,41 @@ jupyterhub:
       POSTGRES_PORT:
         name: POSTGRES_PORT
         value: "5432"
-    extraFiles:
-      xnat_logger:
+    extraVolumes:
+      - name: xnat-logger
+        configMap:
+          name: xnat-logger
+      - name: xnat-authenticator
+        configMap:
+          name: xnat-authenticator
+      - name: named-servers
+        configMap:
+          name: jupyterhub-config
+      - name: timeouts
+        configMap:
+          name: jupyterhub-config
+      - name: postgres
+        configMap:
+          name: jupyterhub-config
+    extraVolumeMounts:
+      - name: xnat-logger
         mountPath: /usr/local/etc/jupyterhub/xnat_logger.py
-        stringData: |
-          import logging
-          import sys
-          
-          logger = logging.getLogger("xnat-jupyterhub")
-          logger.propagate = False
-          logger.setLevel(logging.INFO)
-          
-          sh = logging.StreamHandler(sys.stdout)
-          sh.setLevel(logging.INFO)
-          formatter = logging.Formatter("[%(levelname)s %(asctime)s %(name)s %(module)s:%(lineno)d] %(message)s")
-          sh.setFormatter(formatter)
-          logger.addHandler(sh)
-      xnat_authenticator:
+        subPath: xnat_logger.py
+      - name: xnat-authenticator
         mountPath: /usr/local/etc/jupyterhub/xnat_authenticator.py
-        stringData: |
-          import os
-          import sys
-          import requests
-          import xnat_logger
-          
-          from jupyterhub.auth import Authenticator
-          from requests.auth import HTTPBasicAuth
-          
-          # Logging config
-          logger = xnat_logger.logger
-          
-          class XnatAuthenticator(Authenticator):
-              """
-              Used to authenticate a user with XNAT
-  
-              Requires the environmental variable JH_XNAT_URL to contain the URL of the XNAT to authenticate the user with.
-              """
-  
-              async def authenticate(self, handler, data):
-                  xnat_url = f'{os.environ["JH_XNAT_URL"]}'
-                  xnat_auth_api = f'{xnat_url}/data/services/auth'
-  
-                  logger.debug(f'User {data["username"]} is attempting to login.')
-  
-                  response = requests.put(xnat_auth_api, data=f'username={data["username"]}&password={data["password"]}')
-  
-                  if response.status_code == 200:
-                      logger.info(f'User {data["username"]} authenticated with XNAT.')
-                      return {'name': data['username']}
-                  else:
-                      logger.info(f'Failed to authenticate user {data["username"]} with XNAT.')
-                      return None
+        subPath: xnat_authenticator.py
+      - name: named-servers
+        mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/named_servers.py
+        subPath: named_servers.py
+      - name: timeouts
+        mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/timeouts.py
+        subPath: timeouts.py
+      - name: postgres
+        mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/postgres.py
+        subPath: postgres.py
     extraConfig:
-      namedServers: |
-        c.JupyterHub.allow_named_servers = True
       shutdownOnLogout: |
         c.JupyterHub.shutdown_on_logout = True
-      timeouts: |
-        c.Spawner.start_timeout = int(os.environ['JH_START_TIMEOUT'])
-        c.Spawner.http_timeout = int(os.environ['JH_HTTP_TIMEOUT'])
-      postgres: |
-        import os
-        postgres_db = os.environ['POSTGRES_DB']
-        postgres_user = os.environ['POSTGRES_USER']
-        postgres_pass = os.environ['POSTGRES_PASSWORD']
-        postgres_host = os.environ['POSTGRES_HOST']
-        postgres_port = os.environ['POSTGRES_PORT']
-        c.JupyterHub.db_url = f'postgresql+psycopg2://{postgres_user}:{postgres_pass}@{postgres_host}:{postgres_port}/{postgres_db}'
       spawnHook: |
         import os
         import requests
@@ -186,6 +154,11 @@ jupyterhub:
               if 'image' in container_spec: 
                 spawner.image = container_spec['image']
                 spawner.image_pull_policy = 'Always'
+        
+              if 'command' in container_spec and container_spec['command']: 
+                command = container_spec['command']
+                command = command.split(' ')
+                spawner.cmd = command
 
               if 'env' in container_spec: spawner.environment.update(container_spec['env'])
               spawner.environment.update({
@@ -256,9 +229,9 @@ jupyterhub:
       enabled: false
     uid: 0
     fsGid: 0
-    cmd:
-      - jupyterhub-singleuser
-      - --allow-root
+    cmd: null
+#      - jupyterhub-singleuser
+#      - --allow-root
 
   proxy:
     secretToken: "SECRET_TOKEN"

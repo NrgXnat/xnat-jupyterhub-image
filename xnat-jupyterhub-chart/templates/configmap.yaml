@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: xnat-logger
+data:
+  xnat_logger.py: |
+{{ .Files.Get "files/xnat_logger.py" | indent 4}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: xnat-authenticator
+data:
+  xnat_authenticator.py: |
+{{ .Files.Get "files/xnat_authenticator.py" | indent 4}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jupyterhub-config
+data:
+  named_servers.py: |
+{{ .Files.Get "files/named_servers.py" | indent 4}}
+  timeouts.py: |
+{{ .Files.Get "files/timeouts.py" | indent 4}}
+  postgres.py: |
+{{ .Files.Get "files/postgres.py" | indent 4}}

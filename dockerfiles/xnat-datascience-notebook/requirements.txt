@@ -3,3 +3,11 @@ xnat==0.4.3
 pydicom>=2.3.0
 papermill>=2.3.3
 jupyterlab-git>=0.41.0
+voila
+bqplot
+dash
+dash-bootstrap-components
+panel
+streamlit
+jupyter-server-proxy
+jhsingle-native-proxy

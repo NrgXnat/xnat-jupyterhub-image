@@ -170,6 +170,9 @@ def pre_spawn_hook(spawner):
             if 'image' in container_spec:
                 spawner.image = container_spec['image']
 
+            if 'command' in container_spec:
+                spawner.cmd = container_spec['command']
+
             if 'env' in container_spec:
                 env = container_spec['env']
                 spawner.environment.update(env)
