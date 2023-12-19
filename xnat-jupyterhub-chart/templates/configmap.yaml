@@ -25,3 +25,5 @@ data:
 {{ .Files.Get "files/timeouts.py" | indent 4}}
   postgres.py: |
 {{ .Files.Get "files/postgres.py" | indent 4}}
+  pre_spawn_hook.py: |
+{{ .Files.Get "files/pre_spawn_hook.py" | indent 4}}
