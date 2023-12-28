@@ -16,3 +16,4 @@ jhsingle-native-proxy
 simpervisor<1
 plotlydash-tornado-cmd
 bokeh-root-cmd
+tciaclient
