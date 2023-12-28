@@ -73,12 +73,6 @@ jupyterhub:
       - name: xnat-authenticator
         configMap:
           name: xnat-authenticator
-      - name: named-servers
-        configMap:
-          name: jupyterhub-config
-      - name: timeouts
-        configMap:
-          name: jupyterhub-config
       - name: postgres
         configMap:
           name: jupyterhub-config
@@ -92,12 +86,6 @@ jupyterhub:
       - name: xnat-authenticator
         mountPath: /usr/local/etc/jupyterhub/xnat_authenticator.py
         subPath: xnat_authenticator.py
-      - name: named-servers
-        mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/named_servers.py
-        subPath: named_servers.py
-      - name: timeouts
-        mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/timeouts.py
-        subPath: timeouts.py
       - name: postgres
         mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/postgres.py
         subPath: postgres.py
@@ -107,6 +95,13 @@ jupyterhub:
     extraConfig:
       shutdownOnLogout: |
         c.JupyterHub.shutdown_on_logout = True
+      namedServers: |
+        c.JupyterHub.named_servers = True
+      timeouts: |
+        import os
+
+        c.Spawner.start_timeout = int(os.environ['JH_START_TIMEOUT'])
+        c.Spawner.http_timeout = int(os.environ['JH_HTTP_TIMEOUT'])
     networkPolicy:
       enabled: false
     concurrentSpawnLimit: 64
