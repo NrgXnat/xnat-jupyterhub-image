@@ -1,0 +1,6 @@
+# Ignore Mac stuff
+*.DS_Store
+__MACOSX
+
+# Ignore Pycharm stuff
+.idea

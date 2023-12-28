@@ -4,11 +4,12 @@ The xnat/jupyter image contains a preconfigured JupyterHub for running with XNAT
 
 To connect XNAT with JupyterHub, a `jupyterhub_config.py` file has been created that 
 1. Authenticates a user with XNAT
-2. Configured the JupyterHub SwarmSpawner to mount XNAT data
+2. Configures the JupyterHub Docker SwarmSpawner to mount XNAT data
 
 This repo contains a `Dockerfile`, `docker-compose.yml`, and `docker-stack.yml` file for the `xnat/jupyterhub` image. 
-The xnat-jupyter-plugin must also be installed in your XNAT for this to work. JupyterHub must also be running on a 
-master node within a Docker Swarm in order to spawn Jupyter servers as Docker containers.
+The [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyterhub-plugin) must be installed in your XNAT. 
+The `xnat/jupyterhub` image must also be running on a manager node within a Docker Swarm in order to spawn Jupyter 
+servers as Docker containers. Note that there is one `xnat/jupyterhub` instance per XNAT.
 
 See the [XNAT JupyterHub Plugin Wiki](https://wiki.xnat.org/jupyter-integration) for the latest documentation on this 
 plugin.
@@ -58,9 +59,9 @@ with JupyterHub added as a service alongside XNAT.
      NB_GID: 54
      JH_START_TIMEOUT: 180
      JH_XNAT_URL: http://172.17.0.1 OR https://your.xnat.org
-     JH_XNAT_SERVICE_TOKEN: 
+     JH_XNAT_SERVICE_TOKEN: # create a service token for XNAT to talk to JH
      JH_XNAT_USERNAME: jupyterhub
-     JH_XNAT_PASSWORD: 
+     JH_XNAT_PASSWORD: # create a password for JH to talk to XNAT
    ```
    
    You will also need to create a service token for XNAT to use with JupyterHub and create a password for JupyterHub to 
@@ -156,3 +157,25 @@ Here's a summary of the arguments and environmental variables used in the Jupyte
 | JH_GID                     | The GID to run JupyterHub with. This group should have access to the Docker socket.                                                                               |
 | NB_UID                     | The UID to run the single-user Jupyter containers with. This should match the UID of the XNAT archive.                                                            |
 | NB_GID                     | The GID to run the single-user Jupyter containers with. This should match the GID of the XNAT archive.                                                            |
+
+## Running on Kubernetes
+
+The 'xnat-jupyterhub-chart' directory contains a Helm chart which deploys JupyterHub for an XNAT instance on Kubernetes.
+The chart is based on the [Zero to JupyterHub](https://zero-to-jupyterhub.readthedocs.io/en/latest/) chart. 
+The chart contains a `values.yaml` file which contains the default values needed to deploy JupyterHub for an XNAT. A 
+postgres database is also deployed for JupyterHub. This chart presumes that the XNAT instance is deployed in the same
+Kubernetes namespace as JupyterHub. This chart, [johnflavin/xnat-skaffold](https://gitlab.com/johnflavin/xnat-skaffold),
+was used to deploy XNAT when developing this chart. The PV and PVC for the user workspaces are created by the XNAT
+deployment. Be sure the JupyterHub plugin is installed in the XNAT instance.
+
+The chart can be deployed with the following command:
+
+```shell
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add jupyterhub https://jupyterhub.github.io/helm-chart
+helm repo update
+helm upgrade --install jupyterhub xnat-jupyterhub-chart/ -n xnat --create-namespace --values xnat-jupyterhub-chart/values.yaml
+helm uninstall jupyterhub -n xnat
+```
+
+You may need to update the `values.yaml` file to align with your deployment and XNAT instance.
