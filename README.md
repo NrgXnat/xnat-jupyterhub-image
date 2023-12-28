@@ -88,7 +88,7 @@ with JupyterHub added as a service alongside XNAT.
    
 6. Login to XNAT and configure the JupyterHub plugin. See the documentation for all the details on how to configure the 
    plugin. You will need the service token and password you created in step 2. In XNAT the JupyterHub service account 
-   needs to be enabled and the password set, and the JupyterHub URL, service token, and path translated need to be set.
+   needs to be enabled and the password set, and the JupyterHub URL, service token, and path translation need to be set.
 
 7. To view and inspect JupyterHub and a running single-user notebook container:
    ```shell
@@ -164,7 +164,7 @@ The 'xnat-jupyterhub-chart' directory contains a Helm chart which deploys Jupyte
 The chart is based on the [Zero to JupyterHub](https://zero-to-jupyterhub.readthedocs.io/en/latest/) chart. 
 The chart contains a `values.yaml` file which contains the default values needed to deploy JupyterHub for an XNAT. A 
 postgres database is also deployed for JupyterHub. This chart presumes that the XNAT instance is deployed in the same
-Kubernetes namespace as JupyterHub. This chart, [johnflavin/xnat-skaffold](https://gitlab.com/johnflavin/xnat-skaffold),
+Kubernetes namespace as JupyterHub. This chart, [andrewl4/xnat-skaffold](https://gitlab.com/andrewl4/xnat-skaffold),
 was used to deploy XNAT when developing this chart. The PV and PVC for the user workspaces are created by the XNAT
 deployment. Be sure the JupyterHub plugin is installed in the XNAT instance.
 
@@ -179,3 +179,7 @@ helm uninstall jupyterhub -n xnat
 ```
 
 You may need to update the `values.yaml` file to align with your deployment and XNAT instance.
+
+After deploying the chart, you will need to configure the JupyterHub plugin preferences in the XNAT UI. You will need to 
+set the JupyterHub API URL to http://proxy-public/jupyterhub/hub/api. Don't forget to set the path translation preferences
+as well.

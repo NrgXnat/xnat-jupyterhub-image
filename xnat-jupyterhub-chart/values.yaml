@@ -66,166 +66,42 @@ jupyterhub:
       POSTGRES_PORT:
         name: POSTGRES_PORT
         value: "5432"
-    extraFiles:
-      xnat_logger:
+    extraVolumes:
+      - name: xnat-logger
+        configMap:
+          name: xnat-logger
+      - name: xnat-authenticator
+        configMap:
+          name: xnat-authenticator
+      - name: postgres
+        configMap:
+          name: jupyterhub-config
+      - name: pre-spawn-hook
+        configMap:
+          name: jupyterhub-config
+    extraVolumeMounts:
+      - name: xnat-logger
         mountPath: /usr/local/etc/jupyterhub/xnat_logger.py
-        stringData: |
-          import logging
-          import sys
-          
-          logger = logging.getLogger("xnat-jupyterhub")
-          logger.propagate = False
-          logger.setLevel(logging.INFO)
-          
-          sh = logging.StreamHandler(sys.stdout)
-          sh.setLevel(logging.INFO)
-          formatter = logging.Formatter("[%(levelname)s %(asctime)s %(name)s %(module)s:%(lineno)d] %(message)s")
-          sh.setFormatter(formatter)
-          logger.addHandler(sh)
-      xnat_authenticator:
+        subPath: xnat_logger.py
+      - name: xnat-authenticator
         mountPath: /usr/local/etc/jupyterhub/xnat_authenticator.py
-        stringData: |
-          import os
-          import sys
-          import requests
-          import xnat_logger
-          
-          from jupyterhub.auth import Authenticator
-          from requests.auth import HTTPBasicAuth
-          
-          # Logging config
-          logger = xnat_logger.logger
-          
-          class XnatAuthenticator(Authenticator):
-              """
-              Used to authenticate a user with XNAT
-  
-              Requires the environmental variable JH_XNAT_URL to contain the URL of the XNAT to authenticate the user with.
-              """
-  
-              async def authenticate(self, handler, data):
-                  xnat_url = f'{os.environ["JH_XNAT_URL"]}'
-                  xnat_auth_api = f'{xnat_url}/data/services/auth'
-  
-                  logger.debug(f'User {data["username"]} is attempting to login.')
-  
-                  response = requests.put(xnat_auth_api, data=f'username={data["username"]}&password={data["password"]}')
-  
-                  if response.status_code == 200:
-                      logger.info(f'User {data["username"]} authenticated with XNAT.')
-                      return {'name': data['username']}
-                  else:
-                      logger.info(f'Failed to authenticate user {data["username"]} with XNAT.')
-                      return None
+        subPath: xnat_authenticator.py
+      - name: postgres
+        mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/postgres.py
+        subPath: postgres.py
+      - name: pre-spawn-hook
+        mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/pre_spawn_hook.py
+        subPath: pre_spawn_hook.py
     extraConfig:
-      namedServers: |
-        c.JupyterHub.allow_named_servers = True
       shutdownOnLogout: |
         c.JupyterHub.shutdown_on_logout = True
+      namedServers: |
+        c.JupyterHub.named_servers = True
       timeouts: |
+        import os
+
         c.Spawner.start_timeout = int(os.environ['JH_START_TIMEOUT'])
         c.Spawner.http_timeout = int(os.environ['JH_HTTP_TIMEOUT'])
-      postgres: |
-        import os
-        postgres_db = os.environ['POSTGRES_DB']
-        postgres_user = os.environ['POSTGRES_USER']
-        postgres_pass = os.environ['POSTGRES_PASSWORD']
-        postgres_host = os.environ['POSTGRES_HOST']
-        postgres_port = os.environ['POSTGRES_PORT']
-        c.JupyterHub.db_url = f'postgresql+psycopg2://{postgres_user}:{postgres_pass}@{postgres_host}:{postgres_port}/{postgres_db}'
-      spawnHook: |
-        import os
-        import requests
-        import xnat_logger
-        
-        from requests.auth import HTTPBasicAuth
-        
-        logger = xnat_logger.logger
-        
-        def pre_spawn_hook(spawner):
-          
-          logger.info(f'Requesting user options from XNAT for user {spawner.user.name}')
-          xnat_url = f'{os.environ["JH_XNAT_URL"]}/xapi/jupyterhub/users/{spawner.user.name}/server/user-options'
-          res = requests.get(xnat_url, auth=HTTPBasicAuth(os.environ['JH_XNAT_USERNAME'],
-                                                          os.environ['JH_XNAT_PASSWORD']))
-          if res and res.ok:
-            logger.info(f'User options for user {spawner.user.name} server {spawner.name} retrieved from XNAT.')
-
-            user_options = res.json()
-
-            task_template = user_options['task_template']
-
-            if 'placement' in task_template:
-              placement = task_template['placement']
-              if 'constraints' in placement:
-                spawner.node_selector = {i.split('==')[0]:i.split('==')[-1] for i in placement['constraints']}
-
-            if 'resources' in task_template:
-              resources = task_template['resources']
-              cpu_limit,cpu_guarantee,mem_limit,mem_guarantee,generic_resources = (0,0,0,0,{})
-              if 'cpu_limit' in resources: cpu_limit = resources.pop('cpu_limit')
-              if 'cpu_reservation' in resources: cpu_guarantee = resources.pop('cpu_reservation')
-              if 'mem_limit' in resources: mem_limit = resources.pop('mem_limit')
-              if 'mem_reservation' in resources: mem_guarantee = resources.pop('mem_reservation')
-              if 'generic_resources' in resources: generic_resources = resources.pop('generic_resources')
-
-              if cpu_limit: spawner.cpu_limit = cpu_limit
-              if cpu_guarantee: spawner.cpu_guarantee = cpu_guarantee
-              if mem_limit: spawner.mem_limit = mem_limit
-              if mem_guarantee: spawner.mem_guarantee = mem_guarantee
-
-              if generic_resources:
-                if 'gpu' in generic_resources: generic_resources['nvidia.com/gpu'] = generic_resources.pop('gpu')
-                spawner.extra_resource_guarantees = generic_resources
-                spawner.extra_resource_limits = generic_resources
-
-              if resources: spawner.extra_pod_config.update(resources)
-
-            if 'container_spec' in task_template:
-              container_spec = task_template['container_spec']
-              if 'image' in container_spec: 
-                spawner.image = container_spec['image']
-                spawner.image_pull_policy = 'Always'
-
-              if 'env' in container_spec: spawner.environment.update(container_spec['env'])
-              spawner.environment.update({
-                'NB_UID': os.environ['JH_XNAT_UID'],
-                'NB_GID': os.environ['JH_XNAT_GID'],
-                'NB_USER': f'{spawner.user.name}'
-              })
-
-              if 'mounts' in container_spec:
-                logger.debug(f'Adding mounts to user {spawner.user.name} server {spawner.name} from XNAT. Mounts: {container_spec["mounts"]}')
-
-                v = []
-                vm = []
-                for m in container_spec['mounts']:
-                  src = m['source']
-                  tgt = m['target']
-                  if '/workspaces/' in src: continue
-                  name = os.path.basename(tgt)
-                  v.append({'name':name,'hostPath':{'path':src,'type':'Directory'}})
-                  vm.append({'name':name,'mountPath':tgt,'readOnly':m['read_only']})
-
-                spawner.volumes.extend([i for i in v if i not in spawner.volumes])
-                spawner.volume_mounts.extend([i for i in vm if i not in spawner.volume_mounts])
-
-                mount_txt = 'Mounting the following volumes:'
-                for v in spawner.volumes:
-                  mount_txt += f'\n - {v}'
-
-                for v in spawner.volume_mounts:
-                  mount_txt += f'\n - {v}'
-                logger.info(mount_txt)
-
-            spawner.working_dir = f'/workspace/{spawner.user.name}'
-
-            logger.info('Successfully updated spawner configuration')
-          else:
-            logger.error(f'Failed to get user options from XNAT for user {spawner.user.name}')
-            raise Exception(f'Failed to get user options from XNAT for user {spawner.user.name}')
-
-        c.KubeSpawner.pre_spawn_hook = pre_spawn_hook
     networkPolicy:
       enabled: false
     concurrentSpawnLimit: 64
