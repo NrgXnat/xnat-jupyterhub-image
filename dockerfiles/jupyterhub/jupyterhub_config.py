@@ -23,7 +23,7 @@ logger.addHandler(sh)
 c.JupyterHub.bind_url = 'http://:8000/jupyterhub'
 c.JupyterHub.hub_bind_url = 'http://:8081/jupyterhub'
 c.JupyterHub.hub_connect_url = 'http://jupyterhub:8081/jupyterhub'
-c.JupyterHub.allow_named_servers = False
+c.JupyterHub.allow_named_servers = True
 c.JupyterHub.shutdown_on_logout = True
 c.JupyterHub.template_paths = ['/srv/jupyterhub/templates']
 
@@ -169,6 +169,11 @@ def pre_spawn_hook(spawner):
 
             if 'image' in container_spec:
                 spawner.image = container_spec['image']
+
+            if 'command' in container_spec and container_spec['command']:
+                command = container_spec['command']
+                command = command.split(' ')
+                spawner.cmd = command
 
             if 'env' in container_spec:
                 env = container_spec['env']
