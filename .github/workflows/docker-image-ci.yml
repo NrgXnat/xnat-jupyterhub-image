@@ -1,0 +1,103 @@
+name: Docker Image CI
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - develop
+      - 'JHP-*'
+
+jobs:
+
+  build-and-push-xnat-jupyterhub:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          flavor: |
+            latest=false
+          images: |
+            xnat/jupyterhub
+          tags: |
+            type=raw,value=latest,event=tag,enable=${{ startsWith(github.ref, 'refs/tags/v') && ! contains(github.ref, 'rc') && ! contains(github.ref, 'beta') && ! contains(github.ref, 'alpha') }}
+            type=semver,pattern={{version}},event=tag,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=develop,event=push,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
+            type=ref,event=branch,enable=${{ startsWith(github.ref, 'refs/heads/JHP-') }}
+          labels: |
+            org.opencontainers.image.title=XNAT JupyterHub Image
+            org.opencontainers.image.description=Integrate XNAT with JupyterHub for interactive data analysis and visualization.
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: dockerfiles/jupyterhub
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build-and-push-xnat-datascience-notebook:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          flavor: |
+            latest=false
+          images: |
+            xnat/datascience-notebook
+          tags: |
+            type=raw,value=latest,event=tag,enable=${{ startsWith(github.ref, 'refs/tags/v') && ! contains(github.ref, 'rc') && ! contains(github.ref, 'beta') && ! contains(github.ref, 'alpha') }}
+            type=semver,pattern={{version}},event=tag,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=develop,event=push,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
+            type=ref,event=branch,enable=${{ startsWith(github.ref, 'refs/heads/JHP-') }}
+          labels: |
+            org.opencontainers.image.title=XNAT JupyterHub Image
+            org.opencontainers.image.description=Integrate XNAT with JupyterHub for interactive data analysis and visualization.
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: dockerfiles/xnat-datascience-notebook
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
