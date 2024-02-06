@@ -11,6 +11,8 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 - [JHP-73]: Updates for dashboards. JupyterHub is now configured to accept a command from XNAT to launch a dashboard 
   container instead of only launching notebook containers. The xnat/datascience-notebook image is updated to include
   numerous packages for dashboard development, including Panel, Dash, Streamlit, and Voilà.
+- [JHP-77]: Add GitHub workflows to build and publish the xnat/jupyterhub and xnat/data-science-notebook images to 
+  Docker Hub.
 
 ### Changed
 
@@ -25,3 +27,4 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 
 [JHP-67]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-67
 [JHP-73]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-73
+[JHP-77]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-77
