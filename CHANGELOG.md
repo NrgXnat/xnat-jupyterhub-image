@@ -12,7 +12,8 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
   container instead of only launching notebook containers. The xnat/datascience-notebook image is updated to include
   numerous packages for dashboard development, including Panel, Dash, Streamlit, and Voilà.
 - [JHP-77]: Add GitHub workflows to build and publish the xnat/jupyterhub and xnat/data-science-notebook images to 
-  Docker Hub.
+  Docker Hub. Repository has migrated from [Bitbucket](https://bitbucket.org/xnat-containers/xnat-jupyterhub/src/main/) 
+  to [GitHub](https://github.com/NrgXnat/xnat-jupyterhub-image).
 
 ### Changed
 
