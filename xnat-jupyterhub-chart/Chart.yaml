@@ -3,7 +3,7 @@ name: jupyterhub-xnat
 description: Helm xnat-jupyterhub-chart for deploying JupyterHub (and PostgreSQL) for an XNAT instance
 type: application
 version: 0.1.0
-appVersion: "1.0.1"
+appVersion: "1.1.0"
 
 dependencies:
 - name: postgresql

@@ -1,5 +1,5 @@
 ARG JH_VERSION=3.0.0
-FROM xnat/datascience-notebook:1.0.1
+FROM xnat/datascience-notebook:1.1.0
 
 COPY --chown=${NB_UID}:${NB_GID} requirements.txt /tmp/
 
