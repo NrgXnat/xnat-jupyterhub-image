@@ -157,6 +157,10 @@ Here's a summary of the arguments and environmental variables used in the Jupyte
 | JH_GID                     | The GID to run JupyterHub with. This group should have access to the Docker socket.                                                                               |
 | NB_UID                     | The UID to run the single-user Jupyter containers with. This should match the UID of the XNAT archive.                                                            |
 | NB_GID                     | The GID to run the single-user Jupyter containers with. This should match the GID of the XNAT archive.                                                            |
+| JH_TLS_CLIENT_CERT         | The path to the client certificate for JupyterHub to use when connecting to XNAT.                                                                                 |
+| JH_TLS_CLIENT_KEY          | The path to the client key for JupyterHub to use when connecting to XNAT.                                                                                         |
+| JH_TLS_CA_CERT             | The path to the CA certificate for JupyterHub to use when connecting to XNAT.                                                                                     |
+| JH_TLS_VERIFY              | Whether or not JupyterHub should verify the XNAT certificate.                                                                                                     |
 
 ## Running on Kubernetes
 
