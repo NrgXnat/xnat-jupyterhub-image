@@ -65,15 +65,19 @@ c.SwarmSpawner.network_name = os.environ['JH_NETWORK']  # Spawn single-user cont
 tls_config = {}
 
 if 'JH_TLS_CLIENT_CERT' in os.environ and 'JH_TLS_CLIENT_KEY' in os.environ:
+    logger.info('TLS client certificate and key found. Adding to TLS config.')
     tls_config['client_cert'] = (os.environ['JH_TLS_CLIENT_CERT'], os.environ['JH_TLS_CLIENT_KEY'])
 
 if 'JH_TLS_CA_CERT' in os.environ:
+    logger.info('TLS CA certificate found. Adding to TLS config.')
     tls_config['ca_cert'] = os.environ['JH_TLS_CA_CERT']
 
 if 'JH_TLS_VERIFY' in os.environ:
+    logger.info('TLS verify found. Adding to TLS config.')
     tls_config['verify'] = os.environ['JH_TLS_VERIFY']
 
 if tls_config:
+    logger.info('TLS config found. Adding to SwarmSpawner.')
     c.SwarmSpawner.tls_config = tls_config
 
 # Authentication config
