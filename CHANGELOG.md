@@ -5,6 +5,8 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 
 ## [Unreleased]
 
+- [JHP-81]: Add environmental variable for configuring TLS in the JupyterHub deployment. 
+
 ## [1.1.0] - 2024-03-04
 
 ### Added
@@ -31,3 +33,4 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 [JHP-67]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-67
 [JHP-73]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-73
 [JHP-77]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-77
+[JHP-81]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-81
