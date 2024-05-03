@@ -6,6 +6,7 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 ## [1.1.1-rc.1] - 2024-04-26
 
 - [JHP-81]: Add environmental variable for configuring TLS in the JupyterHub deployment. 
+- [JHP-86]: Fix issue with volume name case sensitivity in helm chart pre_spawn_hook function.
 
 ## [1.1.0] - 2024-03-04
 
@@ -34,3 +35,4 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 [JHP-73]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-73
 [JHP-77]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-77
 [JHP-81]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-81
+[JHP-86]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-86

@@ -1,4 +1,5 @@
 import os
+import re
 import requests
 import xnat_logger
 
@@ -67,13 +68,20 @@ def pre_spawn_hook(spawner):
                 logger.debug(
                     f'Adding mounts to user {spawner.user.name} server {spawner.name} from XNAT. Mounts: {container_spec["mounts"]}')
 
+                def sanitize_vol_name(vol_name):
+                    vol_name = vol_name[:32]
+                    vol_name = vol_name.lower()
+                    vol_name = re.sub(r'[^a-z0-9-]', '-', vol_name)
+                    vol_name = vol_name.strip('-')
+                    return vol_name
+
                 v = []
                 vm = []
                 for m in container_spec['mounts']:
                     src = m['source']
                     tgt = m['target']
                     if '/workspaces/' in src: continue
-                    name = os.path.basename(tgt)
+                    name = sanitize_vol_name(os.path.basename(tgt))
                     v.append({'name': name, 'hostPath': {'path': src, 'type': 'Directory'}})
                     vm.append({'name': name, 'mountPath': tgt, 'readOnly': m['read_only']})
 
