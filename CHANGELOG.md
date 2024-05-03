@@ -3,7 +3,7 @@
 All notable changes to the JupyterHub deployment will be documented here. Any changes to the plugin itself will be 
 documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyterhub-plugin) repository.
 
-## [1.1.1-rc.1] - 2024-04-26
+## [1.1.1] - 2024-05-03
 
 - [JHP-81]: Add environmental variable for configuring TLS in the JupyterHub deployment. 
 - [JHP-86]: Fix issue with volume name case sensitivity in helm chart pre_spawn_hook function.
