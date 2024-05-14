@@ -3,6 +3,11 @@
 All notable changes to the JupyterHub deployment will be documented here. Any changes to the plugin itself will be 
 documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyterhub-plugin) repository.
 
+## [Unreleased]
+
+- [JHP-82]: Support for named servers in JupyterHub. This will allow users to launch multiple servers from XNAT with
+            different configurations.
+
 ## [1.1.1] - 2024-05-03
 
 - [JHP-81]: Add environmental variable for configuring TLS in the JupyterHub deployment. 
@@ -35,4 +40,5 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 [JHP-73]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-73
 [JHP-77]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-77
 [JHP-81]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-81
+[JHP-82]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-82
 [JHP-86]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-86

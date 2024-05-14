@@ -127,8 +127,8 @@ def pre_spawn_hook(spawner):
     """
 
     # Request user_options from XNAT
-    logger.debug(f'Requesting user options from XNAT for user {spawner.user.name}')
-    xnat_url = f'{os.environ["JH_XNAT_URL"]}/xapi/jupyterhub/users/{spawner.user.name}/server/user-options'
+    logger.debug(f'Requesting user options from XNAT for user {spawner.user.name} server {spawner.name}')
+    xnat_url = f'{os.environ["JH_XNAT_URL"]}/xapi/jupyterhub/users/{spawner.user.name}/server/{spawner.name}/user-options'
     r = requests.get(xnat_url, auth=HTTPBasicAuth(os.environ['JH_XNAT_USERNAME'],
                                                   os.environ['JH_XNAT_PASSWORD']))
 
