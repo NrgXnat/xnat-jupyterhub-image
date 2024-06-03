@@ -9,8 +9,8 @@ logger = xnat_logger.logger
 
 
 def pre_spawn_hook(spawner):
-    logger.info(f'Requesting user options from XNAT for user {spawner.user.name}')
-    xnat_url = f'{os.environ["JH_XNAT_URL"]}/xapi/jupyterhub/users/{spawner.user.name}/server/user-options'
+    logger.info(f'Requesting user options from XNAT for user {spawner.user.name} server {spawner.name}')
+    xnat_url = f'{os.environ["JH_XNAT_URL"]}/xapi/jupyterhub/users/{spawner.user.name}/server/{spawner.name}/user-options'
     res = requests.get(xnat_url, auth=HTTPBasicAuth(os.environ['JH_XNAT_USERNAME'],
                                                     os.environ['JH_XNAT_PASSWORD']))
     if res and res.ok:
