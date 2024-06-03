@@ -1,5 +1,5 @@
-ARG JH_VERSION=3.0.0
-FROM jupyter/datascience-notebook:hub-$JH_VERSION
+ARG JH_VERSION=5.0.0
+FROM quay.io/jupyter/datascience-notebook:hub-$JH_VERSION
 
 USER root
 
