@@ -95,8 +95,6 @@ jupyterhub:
     extraConfig:
       shutdownOnLogout: |
         c.JupyterHub.shutdown_on_logout = True
-      namedServers: |
-        c.JupyterHub.named_servers = True
       timeouts: |
         import os
 
@@ -106,6 +104,7 @@ jupyterhub:
       enabled: false
     concurrentSpawnLimit: 64
     consecutiveFailureLimit: 5
+    allowNamedServers: true
     deploymentStrategy:
       type: Recreate
     db:
