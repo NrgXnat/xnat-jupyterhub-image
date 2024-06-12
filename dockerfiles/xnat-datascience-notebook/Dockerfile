@@ -5,6 +5,7 @@ USER root
 
 RUN apt-get update && \
     apt-get clean && \
+    apt-get install -y dcmtk && \
     rm -rf /var/lib/apt/lists/*
 
 USER ${NB_UID}
