@@ -9,6 +9,7 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 
 - [JHP-82]: Support for named servers in JupyterHub. This will allow users to launch multiple servers from XNAT with
             different configurations.
+- [JHP-93]: Add ipydatagrid to xnat/datascience-notebook image. Useful for dashboard development.
 
 ## [1.1.1] - 2024-05-03
 
@@ -44,3 +45,4 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 [JHP-81]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-81
 [JHP-82]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-82
 [JHP-86]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-86
+[JHP-93]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-93
