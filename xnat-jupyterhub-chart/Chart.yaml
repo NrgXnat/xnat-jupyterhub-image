@@ -2,8 +2,8 @@ apiVersion: v2
 name: jupyterhub-xnat
 description: Helm xnat-jupyterhub-chart for deploying JupyterHub (and PostgreSQL) for an XNAT instance
 type: application
-version: 0.1.1
-appVersion: "1.1.1"
+version: 0.1.2
+appVersion: "1.2.0"
 
 dependencies:
 - name: postgresql
