@@ -1,7 +1,7 @@
-ARG JH_VERSION=3.0.0
-FROM jupyterhub/jupyterhub:$JH_VERSION
+ARG JH_VERSION=5.0.0
+FROM quay.io/jupyterhub/jupyterhub:$JH_VERSION
 LABEL maintainer="andrewl@wustl.edu"
-ARG JH_DOCKERSPAWNER_VERSION=12.1.0
+ARG JH_DOCKERSPAWNER_VERSION=13.0.0
 ENV JH_NETWORK="jupyterhub-network"
 ENV JH_XNAT_URL="http://172.17.0.1:80"
 ENV JH_XNAT_SERVICE_TOKEN="secret-token"

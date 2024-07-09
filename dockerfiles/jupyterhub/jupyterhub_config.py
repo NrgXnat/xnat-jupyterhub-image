@@ -60,6 +60,7 @@ c.JupyterHub.spawner_class = 'dockerspawner.SwarmSpawner'
 c.Spawner.start_timeout = int(os.environ['JH_START_TIMEOUT'])
 c.Spawner.http_timeout = int(os.environ['JH_HTTP_TIMEOUT'])
 c.SwarmSpawner.network_name = os.environ['JH_NETWORK']  # Spawn single-user containers into this Docker network
+c.Spawner.environment.update({"JUPYTERHUB_ALLOW_TOKEN_IN_URL": "1"})
 
 # TLS Config
 tls_config = {}
@@ -98,11 +99,13 @@ class XnatAuthenticator(Authenticator):
 
         if response.status_code == 200:
             logger.info(f'User {data["username"]} authenticated with XNAT.')
-            return {'name': data['username']}
+            return {'name': data['username'], 'allowed': True}
         else:
             logger.info(f'Failed to authenticate user {data["username"]} with XNAT.')
             return None
 
+    def check_allowed(self, username, authentication=None):
+        return authentication['allowed']
 
 c.JupyterHub.authenticator_class = XnatAuthenticator
 
