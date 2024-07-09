@@ -5,6 +5,9 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 
 ## [Unreleased]
 
+- [JHP-96]: Add xnat/tensorflow-notebook image based on jupyter/tensorflow-notebook image. This image includes 
+            TensorFlow and other helpful packages for working with XNAT data.
+
 ## [1.2.0] - 2024-06-27
 
 ### Added
@@ -50,3 +53,4 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 [JHP-86]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-86
 [JHP-93]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-93
 [JHP-94]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-94
+[JHP-96]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-96
