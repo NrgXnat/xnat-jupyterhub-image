@@ -18,4 +18,5 @@ plotlydash-tornado-cmd
 bokeh-root-cmd
 tciaclient
 ipydatagrid
+highdicom
 pyradiomics
