@@ -11,6 +11,8 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
             TensorFlow and other helpful packages for working with XNAT data.
 - [JHP-101]: Add pyradiomics to xnat/datascience-notebook and xnat/tensorflow-notebook images. This package is useful for 
              extracting radiomic features from DICOM images.
+- [JHP-102]: Add highdicom to xnat/datascience-notebook. This package is useful for working with DICOM segmentation 
+             objects and other DICOM objects.
 
 ## [1.2.0] - 2024-06-27
 
@@ -59,3 +61,4 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 [JHP-94]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-94
 [JHP-96]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-96
 [JHP-101]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-101
+[JHP-102]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-102
