@@ -19,3 +19,4 @@ bokeh-root-cmd
 tciaclient
 ipydatagrid
 highdicom
+pyradiomics
