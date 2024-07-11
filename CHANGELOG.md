@@ -5,8 +5,12 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 
 ## [Unreleased]
 
+### Added
+
 - [JHP-96]: Add xnat/tensorflow-notebook image based on jupyter/tensorflow-notebook image. This image includes 
             TensorFlow and other helpful packages for working with XNAT data.
+- [JHP-101]: Add pyradiomics to xnat/datascience-notebook and xnat/tensorflow-notebook images. This package is useful for 
+             extracting radiomic features from DICOM images.
 
 ## [1.2.0] - 2024-06-27
 
@@ -54,3 +58,4 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 [JHP-93]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-93
 [JHP-94]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-94
 [JHP-96]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-96
+[JHP-101]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-101
