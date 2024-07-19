@@ -51,6 +51,9 @@ jupyterhub:
       JH_HTTP_TIMEOUT:
         name: JH_HTTP_TIMEOUT
         value: "75"
+      JH_XNAT_ARCHIVE_PVC:
+        name: JH_XNAT_ARCHIVE_PVC
+        value: "archive"
       POSTGRES_DB:
         name: POSTGRES_DB
         value: "jupyterhub"
