@@ -27,7 +27,10 @@ class XnatAuthenticator(Authenticator):
 
         if response.status_code == 200:
             logger.info(f'User {data["username"]} authenticated with XNAT.')
-            return {'name': data['username']}
+            return {'name': data['username'], 'allowed': True}
         else:
             logger.info(f'Failed to authenticate user {data["username"]} with XNAT.')
             return None
+
+    def check_allowed(self, username, authentication=None):
+        return authentication['allowed']
