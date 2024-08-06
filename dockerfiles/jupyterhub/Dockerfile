@@ -1,4 +1,4 @@
-ARG JH_VERSION=5.0.0
+ARG JH_VERSION=4.1.5
 FROM quay.io/jupyterhub/jupyterhub:$JH_VERSION
 LABEL maintainer="andrewl@wustl.edu"
 ARG JH_DOCKERSPAWNER_VERSION=13.0.0
