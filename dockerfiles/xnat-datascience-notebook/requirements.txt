@@ -9,7 +9,7 @@ dash
 dash-bootstrap-components
 panel
 hvplot
-pyviz-comms<3.0.0
+pyviz-comms
 streamlit
 jupyter-server-proxy
 jhsingle-native-proxy
@@ -20,4 +20,4 @@ tciaclient
 ipydatagrid
 highdicom
 pyradiomics
-jupyter-ai
+nbclassic<0.4

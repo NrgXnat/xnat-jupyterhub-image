@@ -60,7 +60,6 @@ c.JupyterHub.spawner_class = 'dockerspawner.SwarmSpawner'
 c.Spawner.start_timeout = int(os.environ['JH_START_TIMEOUT'])
 c.Spawner.http_timeout = int(os.environ['JH_HTTP_TIMEOUT'])
 c.SwarmSpawner.network_name = os.environ['JH_NETWORK']  # Spawn single-user containers into this Docker network
-c.Spawner.environment.update({"JUPYTERHUB_ALLOW_TOKEN_IN_URL": "1"})
 
 # TLS Config
 tls_config = {}

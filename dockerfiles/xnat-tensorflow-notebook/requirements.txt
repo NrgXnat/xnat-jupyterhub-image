@@ -2,14 +2,14 @@ pyxnat>=1.4
 xnat==0.4.3
 pydicom>=2.3.0
 papermill>=2.3.3
-jupyterlab-git<0.50.0
-voila<0.5.0
+jupyterlab-git
+voila
 bqplot
 dash
 dash-bootstrap-components
 panel
 hvplot
-pyviz-comms<3.0.0
+pyviz-comms
 streamlit
 jupyter-server-proxy
 jhsingle-native-proxy
@@ -20,3 +20,4 @@ tciaclient
 ipydatagrid
 highdicom
 pyradiomics
+nbclassic<0.4
