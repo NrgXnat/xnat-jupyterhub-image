@@ -13,6 +13,7 @@ USER ${NB_UID}
 COPY --chown=${NB_UID}:${NB_GID} requirements.txt /tmp/
 
 RUN python3 -m pip install --requirement /tmp/requirements.txt && \
+    jupyter lab build --dev-build=False --minimize=True && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}" && \
     rm /tmp/requirements.txt
