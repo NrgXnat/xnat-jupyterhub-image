@@ -7,12 +7,21 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 
 ### Added
 
+- [JHP-76]: Update to JupyterHub 4.0.
 - [JHP-96]: Add xnat/tensorflow-notebook image based on jupyter/tensorflow-notebook image. This image includes 
             TensorFlow and other helpful packages for working with XNAT data.
 - [JHP-101]: Add pyradiomics to xnat/datascience-notebook and xnat/tensorflow-notebook images. This package is useful for 
              extracting radiomic features from DICOM images.
 - [JHP-102]: Add highdicom to xnat/datascience-notebook. This package is useful for working with DICOM segmentation 
              objects and other DICOM objects.
+
+### Fixed
+
+- [JHP-106]: From the JupyterHub 4.0 upgrade, add check_allowed method to the Authenticator class. The default behavior
+             changes in version 5.0 so go ahead and add the method now instead of relying on the default behavior.
+- [JHP-111]: From the JuptyerHub 4.0 upgrade, fix websocket http 403 error in JupyterLab. This is fixed by adding the 
+             `JUPYTERHUB_SINGLEUSER_EXTENSION=0` environment variable to the JupyterHub deployment. Jupyter 5.0 has
+             fixed this issue, but we are not quite ready to upgrade to 5.0 yet.
 
 ## [1.2.0] - 2024-06-27
 
@@ -53,6 +62,7 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 
 [JHP-67]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-67
 [JHP-73]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-73
+[JHP-76]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-76
 [JHP-77]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-77
 [JHP-81]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-81
 [JHP-82]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-82
@@ -62,3 +72,5 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 [JHP-96]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-96
 [JHP-101]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-101
 [JHP-102]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-102
+[JHP-106]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-106
+[JHP-111]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-111
