@@ -7,6 +7,7 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 
 ### Added
 
+- [JHP-75]: Update to JupyterLab 4.0.
 - [JHP-76]: Update to JupyterHub 4.0.
 - [JHP-96]: Add xnat/tensorflow-notebook image based on jupyter/tensorflow-notebook image. This image includes 
             TensorFlow and other helpful packages for working with XNAT data.
@@ -62,6 +63,7 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 
 [JHP-67]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-67
 [JHP-73]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-73
+[JHP-75]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-75
 [JHP-76]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-76
 [JHP-77]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-77
 [JHP-81]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-81
