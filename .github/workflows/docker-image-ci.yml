@@ -61,6 +61,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Delete huge unnecessary tools folder
+        run: rm -rf /opt/hostedtoolcache
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -107,6 +110,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Delete huge unnecessary tools folder
+        run: rm -rf /opt/hostedtoolcache
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -144,6 +150,6 @@ jobs:
         with:
           context: dockerfiles/xnat-tensorflow-notebook
           push: true
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

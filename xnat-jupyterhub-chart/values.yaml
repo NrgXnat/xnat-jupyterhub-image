@@ -22,7 +22,7 @@ jupyterhub:
 #          - admin
     image:
       name: "jupyterhub/k8s-hub"
-      tag: "3.0.0"
+      tag: "3.2.1"
       pullPolicy: Never
     extraEnv:
       # Some of these values are dependent on your XNAT deployment and may need to be changed

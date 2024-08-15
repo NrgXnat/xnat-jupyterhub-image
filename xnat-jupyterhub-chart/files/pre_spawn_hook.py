@@ -64,6 +64,11 @@ def pre_spawn_hook(spawner):
                 'NB_USER': f'{spawner.user.name}'
             })
 
+            # Issue in JupyterHub 4.0 where cookie auth is not persisted from a token in url authenticated request
+            spawner.environment.update({
+                'JUPYTERHUB_SINGLEUSER_EXTENSION': '0'
+            })
+
             if 'mounts' in container_spec:
                 logger.debug(
                     f'Adding mounts to user {spawner.user.name} server {spawner.name} from XNAT. Mounts: {container_spec["mounts"]}')
