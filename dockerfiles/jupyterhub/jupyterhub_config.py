@@ -55,6 +55,9 @@ if 'NB_UID' in os.environ and 'NB_GID' in os.environ:
         c.SwarmSpawner.environment.update(environment)
         c.SwarmSpawner.extra_container_spec = {'user': '0'}
 
+# Issue in JupyterHub 4.0 where cookie auth is not persisted from a token in url authenticated request
+c.SwarmSpawner.environment.update({'JUPYTERHUB_SINGLEUSER_EXTENSION': '0'})
+
 # Spawner config
 c.JupyterHub.spawner_class = 'dockerspawner.SwarmSpawner'
 c.Spawner.start_timeout = int(os.environ['JH_START_TIMEOUT'])
