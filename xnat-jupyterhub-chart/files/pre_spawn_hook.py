@@ -70,30 +70,30 @@ def pre_spawn_hook(spawner):
             })
 
             if 'mounts' in container_spec:
-                logger.debug(
-                    f'Adding mounts to user {spawner.user.name} server {spawner.name} from XNAT. Mounts: {container_spec["mounts"]}')
-
-                def sanitize_vol_name(vol_name):
-                    vol_name = vol_name[:32]
-                    vol_name = vol_name.lower()
-                    vol_name = re.sub(r'[^a-z0-9-]', '-', vol_name)
-                    vol_name = vol_name.strip('-')
-                    return vol_name
+                logger.debug(f'Adding mounts to user {spawner.user.name} server {spawner.name} from XNAT. '
+                             f'Mounts: {container_spec["mounts"]}')
 
                 v = []
                 vm = []
                 for m in container_spec['mounts']:
                     src = m['source']
                     tgt = m['target']
-                    if '/workspaces/' in src: continue
-                    name = sanitize_vol_name(os.path.basename(tgt))
-                    v.append({'name': name, 'hostPath': {'path': src, 'type': 'Directory'}})
-                    vm.append({'name': name, 'mountPath': tgt, 'readOnly': m['read_only']})
+
+                    # Workspaces mountings are handled by JupyterHub chart
+                    if '/workspaces/' in src:
+                        continue
+
+                    # This presumes that all mounts are within the archive volume, which is not always the case.
+                    # Workaround for now as the plugin does not provide the volume name.
+                    if not any(i['name'] == 'archive' for i in v):
+                        v.append({'name': 'archive',
+                                  'persistentVolumeClaim': {'claimName': os.environ['JH_XNAT_ARCHIVE_PVC']}})
+                    vm.append({'name': 'archive', 'mountPath': tgt, 'readOnly': m['read_only'], 'subPath': src})
 
                 spawner.volumes.extend([i for i in v if i not in spawner.volumes])
                 spawner.volume_mounts.extend([i for i in vm if i not in spawner.volume_mounts])
 
-                mount_txt = 'Mounting the following volumes:'
+                mount_txt = f'Mounting the following volumes for user {spawner.user.name} server {spawner.name}:'
                 for v in spawner.volumes:
                     mount_txt += f'\n - {v}'
 
