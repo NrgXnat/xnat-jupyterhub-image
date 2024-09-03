@@ -54,9 +54,6 @@ jupyterhub:
       JH_XNAT_ARCHIVE_PVC:
         name: JH_XNAT_ARCHIVE_PVC
         value: "archive"
-      JH_XNAT_ARCHIVE_PATH_TRANSLATION:
-        name: JH_XNAT_ARCHIVE_PATH_TRANSLATION
-        value: "/data/xnat/archive"  # This is what archive path as seen by XNAT
       POSTGRES_DB:
         name: POSTGRES_DB
         value: "jupyterhub"

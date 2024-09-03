@@ -70,7 +70,6 @@ def pre_spawn_hook(spawner):
 
                 v = []
                 vm = []
-                xnat_archive_path = os.environ['JH_XNAT_ARCHIVE_PATH_TRANSLATION']
                 for m in container_spec['mounts']:
                     src = m['source']
                     tgt = m['target']
@@ -84,8 +83,7 @@ def pre_spawn_hook(spawner):
                     if not any(i['name'] == 'archive' for i in v):
                         v.append({'name': 'archive',
                                   'persistentVolumeClaim': {'claimName': os.environ['JH_XNAT_ARCHIVE_PVC']}})
-                    sub_path = re.sub(xnat_archive_path + '/', '', src, 1, flags=re.IGNORECASE)
-                    vm.append({'name': 'archive', 'mountPath': tgt, 'readOnly': m['read_only'], 'subPath': sub_path})
+                    vm.append({'name': 'archive', 'mountPath': tgt, 'readOnly': m['read_only'], 'subPath': src})
 
                 spawner.volumes.extend([i for i in v if i not in spawner.volumes])
                 spawner.volume_mounts.extend([i for i in vm if i not in spawner.volume_mounts])
