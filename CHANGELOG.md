@@ -15,6 +15,7 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
              extracting radiomic features from DICOM images.
 - [JHP-102]: Add highdicom to xnat/datascience-notebook. This package is useful for working with DICOM segmentation 
              objects and other DICOM objects.
+- [JHP-113]: Add pygwalker to notebook images.
 
 ### Fixed
 
@@ -76,3 +77,4 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 [JHP-102]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-102
 [JHP-106]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-106
 [JHP-111]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-111
+[JHP-113]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-113
