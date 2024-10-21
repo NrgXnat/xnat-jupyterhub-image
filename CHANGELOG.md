@@ -3,7 +3,7 @@
 All notable changes to the JupyterHub deployment will be documented here. Any changes to the plugin itself will be 
 documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyterhub-plugin) repository.
 
-## [Unreleased]
+## [1.3.0-rc] - 2024-10-21
 
 ### Added
 
