@@ -21,3 +21,4 @@ ipydatagrid
 highdicom
 pyradiomics
 nbclassic<0.4
+pygwalker
