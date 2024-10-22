@@ -187,3 +187,12 @@ You may need to update the `values.yaml` file to align with your deployment and 
 After deploying the chart, you will need to configure the JupyterHub plugin preferences in the XNAT UI. You will need to 
 set the JupyterHub API URL to http://proxy-public/jupyterhub/hub/api. Don't forget to set the path translation preferences
 as well.
+
+## XNAT Archive PVC
+
+Set the `JH_XNAT_ARCHIVE_PVC` environment variable to the name of the persistent volume claim (PVC) used by the XNAT 
+archive in the `values.yaml` file. To configure path translation, configure the XNAT Archive Prefix in the XNAT plugin 
+settings UI to, if using the xnat-skaffold deployment, `/data/xnat/archive` and set the Server Archive Prefix 
+to `.` (a single period). This configuration allows path translation to obtain the relative path within the PVC. Note 
+that the path translation settings for the user workspace in the plugin settings UI are not required, as they are managed 
+by the Helm chart. For more details, refer to this [PR](https://github.com/NrgXnat/xnat-jupyterhub-image/pull/4).
