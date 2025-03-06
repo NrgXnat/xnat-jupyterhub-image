@@ -5,7 +5,7 @@ on:
     tags:
       - 'v*'
     branches:
-      - develop
+      - main
       - 'JHP-*'
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
           tags: |
             type=raw,value=latest,event=tag,enable=${{ startsWith(github.ref, 'refs/tags/v') && ! contains(github.ref, 'rc') && ! contains(github.ref, 'beta') && ! contains(github.ref, 'alpha') }}
             type=semver,pattern={{version}},event=tag,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-            type=raw,value=develop,event=push,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
+            type=raw,value=main,event=push,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=ref,event=branch,enable=${{ startsWith(github.ref, 'refs/heads/JHP-') }}
           labels: |
             org.opencontainers.image.title=XNAT JupyterHub Image
@@ -84,7 +84,7 @@ jobs:
           tags: |
             type=raw,value=latest,event=tag,enable=${{ startsWith(github.ref, 'refs/tags/v') && ! contains(github.ref, 'rc') && ! contains(github.ref, 'beta') && ! contains(github.ref, 'alpha') }}
             type=semver,pattern={{version}},event=tag,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-            type=raw,value=develop,event=push,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
+            type=raw,value=main,event=push,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=ref,event=branch,enable=${{ startsWith(github.ref, 'refs/heads/JHP-') }}
           labels: |
             org.opencontainers.image.title=XNAT JupyterHub Image
@@ -133,7 +133,7 @@ jobs:
           tags: |
             type=raw,value=latest,event=tag,enable=${{ startsWith(github.ref, 'refs/tags/v') && ! contains(github.ref, 'rc') && ! contains(github.ref, 'beta') && ! contains(github.ref, 'alpha') }}
             type=semver,pattern={{version}},event=tag,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-            type=raw,value=develop,event=push,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
+            type=raw,value=main,event=push,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=ref,event=branch,enable=${{ startsWith(github.ref, 'refs/heads/JHP-') }}
           labels: |
             org.opencontainers.image.title=XNAT Jupyter TensorFlow Image
