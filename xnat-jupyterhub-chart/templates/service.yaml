@@ -1,0 +1,36 @@
+{{- if .Values.postgresql.enabled }}
+{{- else }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-postgresql
+  labels:
+    {{- include "jupyterhub.commonLabels" . | nindent 4 }}
+spec:
+{{- if .Values.postgresqlExternalName }}
+  type: ExternalName
+  externalName: {{ .Values.postgresqlExternalHost}}
+{{- else }}
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+      name: postgresql
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: {{ .Release.Name }}-postgresql
+  labels:
+    {{- include "jupyterhub.commonLabels" . | nindent 4 }}
+subsets:
+  - addresses:
+      {{- range .Values.postgresqlExternalIPs }}
+      - ip: {{ . | quote }}
+      {{- end }}
+    ports:
+      - port: 5432
+{{- end }}
+{{- end }}
