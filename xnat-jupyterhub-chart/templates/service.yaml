@@ -1,4 +1,4 @@
-{{- if .Values.postgresql.enabled }}
+{{- if and (.Values.postgresql.enabled) (eq .Values.jupyterhub.hub.db.type "postgresql")}}
 {{- else }}
 apiVersion: v1
 kind: Service
@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "jupyterhub.commonLabels" . | nindent 4 }}
 spec:
-{{- if .Values.postgresqlExternalName }}
+{{- if .Values.postgresqlExternalHost }}
   type: ExternalName
   externalName: {{ .Values.postgresqlExternalHost}}
 {{- else }}
