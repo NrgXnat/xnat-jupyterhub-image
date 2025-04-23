@@ -8,6 +8,10 @@ postgresql:
   enabled: true
   persistence:
     size: 1Gi
+    
+# Use either external database service alias or endpoint when postgresql.enabled is set to false
+postgresqlExternalHost: ""
+postgresqlExternalIPs: []
 
 jupyterhub:
   enabled: true
