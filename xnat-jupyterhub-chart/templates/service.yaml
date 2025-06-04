@@ -1,4 +1,4 @@
-{{- if and (.Values.postgresql.enabled) (eq .Values.jupyterhub.hub.db.type "postgresql")}}
+{{- if and (.Values.postgresql.enabled) (eq .Values.jupyterhub.hub.db.type "postgres")}}
 {{- else }}
 apiVersion: v1
 kind: Service
