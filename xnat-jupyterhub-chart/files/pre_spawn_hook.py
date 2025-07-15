@@ -80,7 +80,7 @@ def pre_spawn_hook(spawner):
                     tgt = m['target']
 
                     # Workspaces mountings are handled by JupyterHub chart
-                    if '/workspaces/' in src:
+                    if '/workspace/' in tgt:
                         continue
 
                     # This presumes that all mounts are within the archive volume, which is not always the case.
