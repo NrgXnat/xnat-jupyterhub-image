@@ -7,7 +7,7 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 
 ### Fixed
 
-- JHP-121: Downgrade numpy in notebook images to avoid compatibility issues with other packages.
+- [JHP-121]: Downgrade numpy in notebook images to avoid compatibility issues with other packages.
 
 ## [1.3.1] - 2025-03-06
 
@@ -93,3 +93,4 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 [JHP-106]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-106
 [JHP-111]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-111
 [JHP-113]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-113
+[JHP-121]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-121
