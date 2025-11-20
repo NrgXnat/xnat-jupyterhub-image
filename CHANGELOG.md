@@ -3,6 +3,12 @@
 All notable changes to the JupyterHub deployment will be documented here. Any changes to the plugin itself will be 
 documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyterhub-plugin) repository.
 
+## [Unreleased]
+
+### Fixed
+
+- JHP-121: Downgrade numpy in notebook images to avoid compatibility issues with other packages.
+
 ## [1.3.1] - 2025-03-06
 
 - There are no changes to images or helm chart in this release, only changes to the xnat-jupyter-plugin.
