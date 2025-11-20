@@ -7,7 +7,10 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 
 ### Fixed
 
+- [JHP-119]: Fix issue with user workspace volume mounting in k8s deployment.
 - [JHP-121]: Downgrade numpy in notebook images to avoid compatibility issues with other packages.
+- [#7]: Use external PostgreSQL server as the backend database
+- [#8]: match jupyterhub.hub.db.type value with what is in values.yaml
 
 ## [1.3.1] - 2025-03-06
 
@@ -93,4 +96,7 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 [JHP-106]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-106
 [JHP-111]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-111
 [JHP-113]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-113
+[JHP-119]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-119
 [JHP-121]: https://radiologics.atlassian.net/jira/software/c/projects/JHP/issues/JHP-121
+[#7]: https://github.com/NrgXnat/xnat-jupyterhub-image/pull/7
+[#8]: https://github.com/NrgXnat/xnat-jupyterhub-image/pull/8
