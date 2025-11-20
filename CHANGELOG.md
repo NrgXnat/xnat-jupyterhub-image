@@ -5,6 +5,8 @@ documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyter
 
 ## [Unreleased]
 
+### Fixed
+
 - JHP-121: Downgrade numpy in notebook images to avoid compatibility issues with other packages.
 
 ## [1.3.1] - 2025-03-06
