@@ -8,7 +8,7 @@ networks:
 
 services:
   jupyterhub:
-    image: xnat/jupyterhub:1.3.2
+    image: xnat/jupyterhub:latest
     hostname: jupyterhub
     build:
       context: dockerfiles/jupyterhub
