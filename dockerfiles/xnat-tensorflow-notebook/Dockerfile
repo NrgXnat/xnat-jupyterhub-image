@@ -1,5 +1,5 @@
 ARG JH_VERSION=4.0.2
-FROM jupyter/tensorflow-notebook:hub-$JH_VERSION
+FROM quay.io/jupyter/tensorflow-notebook:hub-$JH_VERSION
 
 USER root
 
