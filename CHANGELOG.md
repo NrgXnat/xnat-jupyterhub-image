@@ -3,6 +3,12 @@
 All notable changes to the JupyterHub deployment will be documented here. Any changes to the plugin itself will be 
 documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyterhub-plugin) repository.
 
+## [Unreleased]
+
+### Fixed
+
+- [JHP-125]: Fix issue with username escaping mismatch and missing start.sh causing permission errors in Kubernetes JupyterHub deployments
+
 ## [1.3.2] - 2025-11-20
 
 ### Fixed
