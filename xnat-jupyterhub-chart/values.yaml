@@ -132,8 +132,8 @@ jupyterhub:
       type: static
       static:
         pvcName: "workspaces"
-        subPath: "users/{username}"
-      homeMountPath: /workspace/{username}
+        subPath: "users/{unescaped_username}"
+      homeMountPath: /workspace/{unescaped_username}
     networkPolicy:
       enabled: false
     uid: 0
