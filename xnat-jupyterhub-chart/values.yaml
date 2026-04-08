@@ -1,17 +1,40 @@
-global:
-  postgresql:
-    postgresqlDatabase: "jupyterhub"
-    postgresqlPassword: "jupyterhub"
-    postgresqlUsername: "jupyterhub"
-
-postgresql:
-  enabled: true
-  persistence:
-    size: 1Gi
-    
-# Use either external database service alias or endpoint when postgresql.enabled is set to false
-postgresqlExternalHost: ""
-postgresqlExternalIPs: []
+postgres:
+  cluster:
+    affinity: {}
+    enabled: true # Set to false to use your own DB
+    name: "" # Defaults to "{release-name}-postgres"
+    instances: 1
+    version: 15
+    storage:
+      size: "5Gi"
+      storageClass: "default"
+    resources:
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits:
+        cpu: 16
+        memory: "32Gi"
+    parameters:
+      max_connections: "100"
+      shared_buffers: "256MB"
+      standard_conforming_strings: "off"
+    enableSuperuserAccess: true
+    credentials:
+      # Always use an external secret for production deployments.
+      externalSecret: null
+      database: "jupyterhub"
+      username: "jupyterhub"
+      password: "jupyterhub"
+    # CNPG can include roles and services in cluster definitions.
+    # See the official docs for more information
+    # https://cloudnative-pg.io/docs/1.29/cloudnative-pg.v1#managedconfiguration
+    managed: {}  
+  external:
+    # Set only one of PostgresUri or postgresIp
+    postgresUri: null
+    postgresIp: null
+    postgresPort: null
 
 jupyterhub:
   enabled: true
@@ -69,7 +92,7 @@ jupyterhub:
         value: "jupyterhub"
       POSTGRES_HOST:
         name: POSTGRES_HOST
-        value: "jupyterhub-postgresql" # This is dependent on the release name
+        value: "jupyterhub-postgres-rw" # This is dependent on the release name
       POSTGRES_PORT:
         name: POSTGRES_PORT
         value: "5432"

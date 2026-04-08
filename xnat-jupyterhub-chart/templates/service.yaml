@@ -1,36 +1,39 @@
-{{- if and (.Values.postgresql.enabled) (eq .Values.jupyterhub.hub.db.type "postgres")}}
-{{- else }}
+{{- if (not .Values.postgres.cluster.enabled) and (eq (lower .Values.jupyterhub.hub.db.type) "postgres") }}
+{{- if .Values.postgres.external.postgresUri }}
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-postgresql
-  labels:
-    {{- include "jupyterhub.commonLabels" . | nindent 4 }}
+  name: {{ include "jupyterhub.postgres.fullname" . }}
 spec:
-{{- if .Values.postgresqlExternalHost }}
   type: ExternalName
-  externalName: {{ .Values.postgresqlExternalHost}}
-{{- else }}
-  type: ClusterIP
-  clusterIP: None
-  ports:
-    - port: 5432
-      targetPort: 5432
-      protocol: TCP
-      name: postgresql
+  externalName: {{ .Values.postgres.external.postgresUri }}
+{{- else if .Values.postgres.external.postgresIp }}
 ---
 apiVersion: v1
-kind: Endpoints
+kind: Service
 metadata:
-  name: {{ .Release.Name }}-postgresql
+  name: {{ include "jupyterhub.postgres.fullname" . }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ include "jupyterhub.postgres.postgresPort" . }}
+      targetPort: {{ include "jupyterhub.postgres.postgresPort" . }}
+      protocol: TCP
+      name: postgres
+---
+apiVersion: v1
+kind: EndpointSlice
+metadata:
+  name: {{ include "jupyterhub.postgres.fullname" . }}
   labels:
-    {{- include "jupyterhub.commonLabels" . | nindent 4 }}
-subsets:
+    kubernetes.io/service-name: {{ include "jupyterhub.postgres.fullname" . }}
+addressType: IPv4
+endpoints:
   - addresses:
-      {{- range .Values.postgresqlExternalIPs }}
-      - ip: {{ . | quote }}
-      {{- end }}
-    ports:
-      - port: 5432
+      - "{{ .Values.postgres.external.postgresIp }}"
+ports:
+  - port: {{ include "jupyterhub.postgres.postgresPort" . }}
+    protocol: TCP
 {{- end }}
 {{- end }}
