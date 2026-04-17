@@ -3,6 +3,12 @@
 All notable changes to the JupyterHub deployment will be documented here. Any changes to the plugin itself will be 
 documented in the [xnat-jupyter-plugin](https://bitbucket.org/xnatx/xnat-jupyterhub-plugin) repository.
 
+## [1.3.5] - 2026-xx-xx
+
+### Changed
+
+- Updated helm chart to use Cloud Native Postgres in place of Bitnami Postgres. The values schema was changed substantially to match
+
 ## [1.3.4] - 2026-03-20
 
 - There are no changes to images or helm chart in this release, only changes to the xnat-jupyter-plugin jar.
