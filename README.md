@@ -174,9 +174,10 @@ deployment. Be sure the JupyterHub plugin is installed in the XNAT instance.
 The chart can be deployed with the following command:
 
 ```shell
-helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add cnpg https://cloudnative-pg.github.io/charts
 helm repo add jupyterhub https://jupyterhub.github.io/helm-chart
 helm repo update
+helm install cnpg-operator cnpg/cloudnative-pg
 helm upgrade --install jupyterhub xnat-jupyterhub-chart/ -n xnat --create-namespace --values xnat-jupyterhub-chart/values.yaml
 helm uninstall jupyterhub -n xnat
 ```

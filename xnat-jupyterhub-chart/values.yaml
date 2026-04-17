@@ -18,7 +18,6 @@ postgres:
     parameters:
       max_connections: "100"
       shared_buffers: "256MB"
-      standard_conforming_strings: "off"
     enableSuperuserAccess: true
     credentials:
       # Always use an external secret for production deployments.
