@@ -31,9 +31,9 @@ postgres:
     managed: {}  
   external:
     # Set only one of PostgresUri or postgresIp
-    postgresUri: null
-    postgresIp: null
-    postgresPort: null
+    postgresUri: ""
+    postgresIp: []
+    postgresPort: ""
 
 jupyterhub:
   enabled: true

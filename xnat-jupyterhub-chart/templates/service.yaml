@@ -22,7 +22,7 @@ spec:
       protocol: TCP
       name: postgres
 ---
-apiVersion: v1
+apiVersion: discovery.k8s.io/v1
 kind: EndpointSlice
 metadata:
   name: {{ include "jupyterhub.postgres.fullname" . }}
@@ -31,7 +31,9 @@ metadata:
 addressType: IPv4
 endpoints:
   - addresses:
-      - "{{ .Values.postgres.external.postgresIp }}"
+      {{- range .Values.postgres.external.postgresIp }}
+      - {{ . | quote }}
+      {{- end }}
 ports:
   - port: {{ include "jupyterhub.postgres.postgresPort" . }}
     protocol: TCP
