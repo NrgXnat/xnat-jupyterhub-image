@@ -165,9 +165,8 @@ Here's a summary of the arguments and environmental variables used in the Jupyte
 ## Running on Kubernetes
 
 The 'xnat-jupyterhub-chart' directory contains a Helm chart which deploys JupyterHub for an XNAT instance on Kubernetes.
-The chart is based on the [Zero to JupyterHub](https://zero-to-jupyterhub.readthedocs.io/en/latest/) chart. 
-The chart contains a `values.yaml` file which contains the default values needed to deploy JupyterHub for an XNAT. A 
-postgres database is also deployed for JupyterHub. This chart presumes that the XNAT instance is deployed in the same
+The chart is based on the [Zero to JupyterHub](https://zero-to-jupyterhub.readthedocs.io/en/latest/) chart.
+The chart contains a `values.yaml` file which contains the default values needed to deploy JupyterHub for an XNAT. A postgres database is required and can either be deployed separately or as part of the chart. To deploy the database as part of the chart the [Cloud Native Postgres Operator](https://cloudnative-pg.github.io/charts) must be installed before installing the helm chart. This chart presumes that the XNAT instance is deployed in the same
 Kubernetes namespace as JupyterHub. This chart, [andrewl4/xnat-skaffold](https://gitlab.com/andrewl4/xnat-skaffold),
 was used to deploy XNAT when developing this chart. The PV and PVC for the user workspaces are created by the XNAT
 deployment. Be sure the JupyterHub plugin is installed in the XNAT instance.
@@ -175,14 +174,17 @@ deployment. Be sure the JupyterHub plugin is installed in the XNAT instance.
 The chart can be deployed with the following command:
 
 ```shell
-helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add cnpg https://cloudnative-pg.github.io/charts
 helm repo add jupyterhub https://jupyterhub.github.io/helm-chart
 helm repo update
+helm install cnpg-operator cnpg/cloudnative-pg
 helm upgrade --install jupyterhub xnat-jupyterhub-chart/ -n xnat --create-namespace --values xnat-jupyterhub-chart/values.yaml
 helm uninstall jupyterhub -n xnat
 ```
 
-You may need to update the `values.yaml` file to align with your deployment and XNAT instance.
+You may need to update the `values.yaml` file to align with your deployment and XNAT instance. 
+
+Versions of this chart prior to 1.3.5 used the Bitnami Postgres helm chart. Existing postgres data from prior installations will be lost without a manual backup a restore. This data is mostly session information and starting with a fresh database should have no impact. Any values provided to that postgres chart will need to be updated to match the CNPG schema in `values.yaml`.
 
 After deploying the chart, you will need to configure the JupyterHub plugin preferences in the XNAT UI. You will need to 
 set the JupyterHub API URL to http://proxy-public/jupyterhub/hub/api. Don't forget to set the path translation preferences
