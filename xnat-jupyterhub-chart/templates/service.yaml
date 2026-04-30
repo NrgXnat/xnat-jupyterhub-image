@@ -1,4 +1,4 @@
-{{- if (not .Values.postgres.cluster.enabled) and (eq (lower .Values.jupyterhub.hub.db.type) "postgres") }}
+{{- if and (.Values.postgres.cluster.enabled) (eq (lower .Values.jupyterhub.hub.db.type) "postgres") }}
 {{- if .Values.postgres.external.postgresUri }}
 ---
 apiVersion: v1
