@@ -1,6 +1,7 @@
 postgres:
   cluster:
     affinity: {}
+    tolerations: {}
     enabled: true # Set to false to use your own DB
     name: "" # Defaults to "{release-name}-postgres"
     instances: 1

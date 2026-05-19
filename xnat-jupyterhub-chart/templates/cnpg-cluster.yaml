@@ -21,6 +21,9 @@ spec:
   {{- if .Values.postgres.cluster.affinity }}
   affinity: {{ .Values.postgres.cluster.affinity | toYaml | nindent 4 }}
   {{- end }}
+  {{- if .Values.postgres.cluster.tolerations }}
+  tolerations: {{- .Values.postgres.cluster.tolerations | toYaml | nindent 4}}
+  {{- end }}
   instances: {{ .Values.postgres.cluster.instances }}
   imageName: ghcr.io/cloudnative-pg/postgresql:{{ .Values.postgres.cluster.version }}
   storage:
